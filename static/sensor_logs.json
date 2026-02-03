@@ -1,0 +1,132 @@
+[
+  {
+    "timestamp": "16:01:42",
+    "level": "SYSTEM",
+    "message": "Sensor simulation initialized"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "INFO",
+    "message": "Monitoring 3 sensors"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "DEBUG",
+    "message": "Data file path: C:\\Users\\Safiya\\OneDrive\\Desktop\\aqi_project\\aqiproject\\static\\sensor_data.json"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "DEBUG",
+    "message": "Directory created/verified: C:\\Users\\Safiya\\OneDrive\\Desktop\\aqi_project\\aqiproject\\static"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "INFO",
+    "message": "No existing data file, starting fresh"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "DATA",
+    "message": "SENSOR-001 | AQI: 95 (Moderate) | PM2.5: 95.8 \u00b5g/m\u00b3 | Temp: 28.9\u00b0C"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "DATA",
+    "message": "SENSOR-002 | AQI: 80 (Moderate) | PM2.5: 80.3 \u00b5g/m\u00b3 | Temp: 25.0\u00b0C"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "DATA",
+    "message": "SENSOR-003 | AQI: 125 (Unhealthy) | PM2.5: 112.7 \u00b5g/m\u00b3 | Temp: 31.6\u00b0C"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "DEBUG",
+    "message": "Saved 3 total readings to file"
+  },
+  {
+    "timestamp": "16:01:42",
+    "level": "SUCCESS",
+    "message": "Network scan #1 complete - All sensors online (Total history: 3)"
+  },
+  {
+    "timestamp": "16:01:45",
+    "level": "DATA",
+    "message": "SENSOR-001 | AQI: 181 (Unhealthy) | PM2.5: 140.5 \u00b5g/m\u00b3 | Temp: 28.2\u00b0C"
+  },
+  {
+    "timestamp": "16:01:45",
+    "level": "DATA",
+    "message": "SENSOR-002 | AQI: 20 (Excellent) | PM2.5: 20.1 \u00b5g/m\u00b3 | Temp: 25.4\u00b0C"
+  },
+  {
+    "timestamp": "16:01:45",
+    "level": "DATA",
+    "message": "SENSOR-003 | AQI: 186 (Unhealthy) | PM2.5: 143.3 \u00b5g/m\u00b3 | Temp: 27.9\u00b0C"
+  },
+  {
+    "timestamp": "16:01:45",
+    "level": "DEBUG",
+    "message": "Saved 6 total readings to file"
+  },
+  {
+    "timestamp": "16:01:45",
+    "level": "SUCCESS",
+    "message": "Network scan #2 complete - All sensors online (Total history: 6)"
+  },
+  {
+    "timestamp": "16:01:48",
+    "level": "DATA",
+    "message": "SENSOR-001 | AQI: 124 (Unhealthy) | PM2.5: 112.1 \u00b5g/m\u00b3 | Temp: 32.4\u00b0C"
+  },
+  {
+    "timestamp": "16:01:48",
+    "level": "DATA",
+    "message": "SENSOR-002 | AQI: 79 (Moderate) | PM2.5: 79.7 \u00b5g/m\u00b3 | Temp: 21.1\u00b0C"
+  },
+  {
+    "timestamp": "16:01:48",
+    "level": "DATA",
+    "message": "SENSOR-003 | AQI: 80 (Moderate) | PM2.5: 80.8 \u00b5g/m\u00b3 | Temp: 24.8\u00b0C"
+  },
+  {
+    "timestamp": "16:01:48",
+    "level": "DEBUG",
+    "message": "Saved 9 total readings to file"
+  },
+  {
+    "timestamp": "16:01:48",
+    "level": "SUCCESS",
+    "message": "Network scan #3 complete - All sensors online (Total history: 9)"
+  },
+  {
+    "timestamp": "16:01:51",
+    "level": "DATA",
+    "message": "SENSOR-001 | AQI: 85 (Moderate) | PM2.5: 85.3 \u00b5g/m\u00b3 | Temp: 30.8\u00b0C"
+  },
+  {
+    "timestamp": "16:01:51",
+    "level": "DATA",
+    "message": "SENSOR-002 | AQI: 97 (Moderate) | PM2.5: 97.9 \u00b5g/m\u00b3 | Temp: 25.9\u00b0C"
+  },
+  {
+    "timestamp": "16:01:51",
+    "level": "DATA",
+    "message": "SENSOR-003 | AQI: 16 (Excellent) | PM2.5: 16.9 \u00b5g/m\u00b3 | Temp: 25.5\u00b0C"
+  },
+  {
+    "timestamp": "16:01:51",
+    "level": "DEBUG",
+    "message": "Saved 12 total readings to file"
+  },
+  {
+    "timestamp": "16:01:51",
+    "level": "SUCCESS",
+    "message": "Network scan #4 complete - All sensors online (Total history: 12)"
+  },
+  {
+    "timestamp": "16:01:54",
+    "level": "SYSTEM",
+    "message": "Simulation stopped - Final history count: 12"
+  }
+]

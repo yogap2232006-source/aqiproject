@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - VOODOO DEVS - IoT Predictor</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+
+<body>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="menu-toggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <form style="padding: 0;" class="search-bar">
+                <i style="margin-left: 2px;" class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="AQI monitoring Zone: Kilpauk and Egmore" readonly>
+                <button type="#" class="btn-primary">
+                    Search
+                </button>
+            </form>
+
+            <div class="user-profile">
+                <div class="profile-actions">
+                    <!-- Theme Toggle -->
+                    <button id="themeToggle" class="icon-btn" title="Toggle theme">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+
+                    <!-- Notifications -->
+                    <div class="notification-wrapper">
+                        <button id="notificationBtn" class="icon-btn" title="Notifications">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notifBadge" class="badge-dot hidden"></span>
+                        </button>
+                        <div id="notificationDropdown" class="notification-dropdown hidden">
+                            <div class="notif-header">
+                                <span>Notifications</span>
+                                <button id="clearNotifs" class="clear-btn">Clear</button>
+                            </div>
+                            <div id="notifList" class="notif-list">
+                                <div class="empty-state">No new alerts</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AQI Widget -->
+                    <button id="widgetToggle" class="icon-btn" title="Toggle widget">
+                        <i class="fa-solid fa-square-poll-vertical"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dashboard Section -->
+        <!-- Sidebar / Terminal -->
+        <div id="terminalSidebar" class="terminal-sidebar hidden">
+            <div class="terminal-header">
+                <span>Environment Simulator</span>
+                <button id="closeSidebar" class="icon-btn" title="Close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="terminal-controls">
+                <button id="startSimBtn" class="sim-control-btn start">
+                    <i class="fa-solid fa-play"></i> Start Simulation
+                </button>
+                <button id="stopSimBtn" class="sim-control-btn stop" disabled>
+                    <i class="fa-solid fa-stop"></i> Stop Simulation
+                </button>
+                <button id="resetSimBtn" class="sim-control-btn reset">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+            </div>
+            <div class="sensor-control">
+                <button id="sensorMinus" type="button">−</button>
+
+                <span class="sensor-label">
+                    Sensors: <span id="sensorCount">1</span>
+                </span>
+
+                <button id="sensorPlus" type="button">+</button>
+            </div>
+
+            <div class="terminal-body" id="terminalContent">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">[SYSTEM]</span>
+                    <span class="terminal-text">Environment Simulator Ready</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">[INFO]</span>
+                    <span class="terminal-text">Awaiting command...</span>
+                </div>
+            </div>
+
+        </div>
+        <section class="dashboard-container">
+            <div class="grid-layout">
+                <!-- Map Card -->
+                <div class="card map-card">
+                    <div id="map"></div>
+
+                    <div class="map-controls">
+                        <button class="map-btn">+</button>
+                        <button class="map-btn">-</button>
+                    </div>
+
+                    <div class="map-overlay">
+                        <h4 class="street-label">STREET VIEW: MADISON AVE</h4>
+                        <div class="pollutant-summary">
+                            <div class="pollutant-item">
+                                <span class="pollutant-name">PM2.5</span>
+                                <div class="pollutant-value success">38 <span>µg/m³</span></div>
+                            </div>
+                            <div class="pollutant-item">
+                                <span class="pollutant-name">NO₂</span>
+                                <div class="pollutant-value warning">21 <span>ppb</span></div>
+                            </div>
+                            <div class="pollutant-item">
+                                <span class="pollutant-name">CO</span>
+                                <div class="pollutant-value info">0.8 <span>ppm</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Side Stats -->
+                <div class="stats-column">
+                    <!-- AQI Score -->
+                    <div class="card stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Live AQI Score</span>
+                            <i class="fa-solid fa-wind"></i>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-value">42</div>
+                            <div id="aqi_category" class="stat-category excellent">EXCELLENT</div>
+                            <div class="stat-trend">-5% vs last hr</div>
+                        </div>
+                    </div>
+
+                    <!-- Temperature -->
+                    <div class="card stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Temperature</span>
+                            <i class="fa-solid fa-temperature-half"></i>
+                        </div>
+                        <div class="stat-body">
+                            <div id="temperature_value" class="stat-value">24°C</div>
+                            <div class="progress-indicator"></div>
+                        </div>
+                    </div>
+
+                    <!-- Humidity -->
+                    <div class="card stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Humidity</span>
+                            <i class="fa-solid fa-droplet"></i>
+                        </div>
+                        <div class="stat-body">
+                            <div class="stat-value">55%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sensor Management Section -->
+            <section class="sensor-section">
+                <div class="section-header">
+                    <h2>Sensor Management</h2>
+                    <div class="filter-status">
+                        <div id="allSensorsFilter" class="filter-item active">
+                            <span class="dot"></span> ALL SENSORS (128)
+                        </div>
+                        <div class="filter-item">
+                            <span class="dot offline"></span> ONLINE (124)
+                        </div>
+                        <div class="filter-item">
+                            <span class="dot danger"></span> OFFLINE (4)
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sensor Grid -->
+                <div class="sensor-grid">
+                    <!-- Sensor Card Template (JS will populate) -->
+                    <div class="sensor-card-wrapper">
+                        <div class="sensor-card-inner">
+                            <!-- FRONT -->
+                            <div class="sensor-card front">
+                                <div class="sensor-header">
+                                    <div class="sensor-info">
+                                        <div class="sensor-icon">
+                                            <i class="fa-solid fa-wifi"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="sensor-id">
+                                                SENSOR-001
+                                                <span class="status-dot online"></span>
+                                            </h4>
+                                            <span class="sensor-location">Taylor's Road, Kilpauk</span>
+                                        </div>
+                                    </div>
+                                    <i class="fa-solid fa-ellipsis-vertical"></i>
+                                </div>
+
+                                <div class="sensor-stats">
+                                    <div class="sensor-stat">
+                                        <span class="pollutant-name">PM2.5</span>
+                                        <div class="pollutant-value success"
+                                            style="font-size: 1.25rem; font-weight: 700; display: inline-flex; align-items: baseline; gap: 0.25rem; line-height: 1.2;">
+                                            38 <span style="font-size: 0.85rem;">µg/m³</span>
+                                        </div>
+                                    </div>
+                                    <div class="sensor-stat">
+                                        <span class="pollutant-name"">NO₂</span>
+                                        <div class=" pollutant-value warning"
+                                            style="font-size: 1.25rem; font-weight: 700; display: inline-flex; align-items: baseline; gap: 0.25rem; line-height: 1.2;">
+                                            21<span span style="font-size: 0.85rem;">ppb</span></span>
+                                    </div>
+                                </div>
+                                <div class="sensor-stat">
+                                    <span class="pollutant-name">CO</span>
+                                    <div class="pollutant-value info"
+                                        style="font-size: 1.25rem; font-weight: 700; display: inline-flex; align-items: baseline; gap: 0.25rem; line-height: 1.2;">
+                                        0.8<span span style="font-size: 0.85rem;">ppm</span></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="sensor-footer">
+                                <div class="sensor-status">
+                                    <span>Status:</span>
+                                    <span class="status-text">Online</span>
+                                    <button class="flip-btn">DETAILS</button>
+                                </div>
+                                <!-- Optional other buttons -->
+                            </div>
+
+                        </div>
+
+                        <!-- BACK -->
+                        <div class="sensor-card back">
+                            <div class="sensor-header">
+                                <div class="sensor-info">
+                                    <div class="sensor-icon">
+                                        <i class="fa-solid fa-wifi"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="sensor-id">
+                                            SEN-001
+                                            <span class="status-dot online"></span>
+                                        </h4>
+                                        <span class="sensor-location">Detailed View</span>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </div>
+
+                            <div class="sensor-details">
+                                <p>Additional sensor information and diagnostics would appear here.</p>
+                            </div>
+
+                            <div class="sensor-footer">
+                                <!-- <button class="btn-text">CALIBRATE</button> -->
+                                <button class="flip-btn">BACK</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </section>
+
+            <!-- Analytics Section -->
+            <section class="analytics-section">
+                <div class="section-header">
+                    <h2>Historical Logs & Analytics</h2>
+                    <p class="section-subtitle">Analyze localized air quality patterns across the urban sensor network.
+                    </p>
+                    <div class="section-actions">
+                        <button class="btn-primary">
+                            <i class="fa-solid fa-download"></i>
+                            <a href="{% url 'settings' %}">Request API</a>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="analytics-grid">
+                    <!-- Main Chart Column -->
+                    <div class="chart-column">
+                        <!-- Chart Container -->
+                        <div class="card chart-card">
+                            <div class="chart-header">
+                                <h3>Live Analytics Trends</h3>
+                                <div class="chart-controls">
+                                    <select id="sensorFilter" class="chart-filter">
+                                        <option value="all">All Sensors</option>
+                                        <option value="0">Sensor A</option>
+                                        <option value="1">Sensor B</option>
+                                        <option value="2">Sensor C</option>
+                                    </select>
+                                    <button id="curveBtn" class="toggle-btn active"
+                                        onclick="updateChartType('line')">Curve</button>
+                                    <button id="barBtn" class="toggle-btn" onclick="updateChartType('bar')">Bar</button>
+                                </div>
+                            </div>
+                            <div class="chart-wrapper">
+                                <canvas id="analyticsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Heatmap Section -->
+                        <div class="card heatmap-card">
+                            <h4>Heatmap Of Weekly Pollution Density</h4>
+                            <div class="heatmap-time-markers">
+                                <div class="time-marker day">
+                                    <i class="fa-solid fa-sun"></i>
+                                    Day (00:00 - 12:00)
+                                </div>
+                                <div class="time-marker night">
+                                    <i class="fa-solid fa-moon"></i>
+                                    Night (12:00 - 00:00)
+                                </div>
+                            </div>
+                            <div class="heatmap-container">
+                                <div class="heatmap-labels">
+                                    <span>Mon</span><span>Tue</span><span>Wed</span>
+                                    <span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
+                                </div>
+                                <div class="heatmap-grid" id="heatmapGrid"></div>
+                            </div>
+                            <div class="heatmap-legend">
+                                <div class="legend-item">
+                                    <span class="legend-color low"></span> Low
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color moderate"></span> Moderate
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-color high"></span> High
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Widgets Column -->
+                    <div class="widgets-column">
+                        <!-- Calendar Widget -->
+                        <div class="card widget-card">
+                            <div class="widget-header">
+                                <button class="icon-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                                <h4>November 2023</h4>
+                                <button class="icon-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                            </div>
+                            <div class="calendar-grid">
+                                <span class="day-label">S</span><span class="day-label">M</span>
+                                <span class="day-label">T</span><span class="day-label">W</span>
+                                <span class="day-label">T</span><span class="day-label">F</span>
+                                <span class="day-label">S</span>
+                                <span class="day inactive">29</span><span class="day inactive">30</span>
+                                <span class="day inactive">31</span><span class="day">1</span>
+                                <span class="day">2</span><span class="day">3</span><span class="day">4</span>
+                                <span class="day active">5</span><span class="day active-current">6</span>
+                                <span class="day active">7</span><span class="day">8</span>
+                                <span class="day">9</span><span class="day">10</span><span class="day">11</span>
+                            </div>
+                        </div>
+
+                        <!-- Peak Pollution Hours -->
+                        <div class="card widget-card">
+                            <div class="widget-header-simple">
+                                <i class="fa-solid fa-bolt"></i>
+                                <h4>Peak Pollution Hours</h4>
+                            </div>
+                            <div class="peak-bars">
+                                <div class="peak-row">
+                                    <span class="time-label">08:00</span>
+                                    <div class="bar-container">
+                                        <div class="bar-fill warning" style="width: 85%;"></div>
+                                    </div>
+                                    <span class="value-label warning">85%</span>
+                                </div>
+                                <div class="peak-row">
+                                    <span class="time-label">12:00</span>
+                                    <div class="bar-container">
+                                        <div class="bar-fill success" style="width: 35%;"></div>
+                                    </div>
+                                    <span class="value-label success">35%</span>
+                                </div>
+                                <div class="peak-row">
+                                    <span class="time-label">17:00</span>
+                                    <div class="bar-container">
+                                        <div class="bar-fill danger" style="width: 95%;"></div>
+                                    </div>
+                                    <span class="value-label danger">95%</span>
+                                </div>
+                                <p class="peak-note">Pollution peaks during morning rush.</p>
+                            </div>
+                        </div>
+
+                        <!-- Avg Monthly AQI -->
+                        <div class="card widget-card">
+                            <h4>Avg Monthly AQI</h4>
+                            <div class="monthly-chart">
+                                <div class="month-bar">
+                                    <div class="bar" style="height: 40px;"></div>
+                                    <span>SEP</span>
+                                </div>
+                                <div class="month-bar">
+                                    <div class="bar" style="height: 50px;"></div>
+                                    <span>OCT</span>
+                                </div>
+                                <div class="month-bar active">
+                                    <div class="bar" style="height: 70px;"></div>
+                                    <span>NOV</span>
+                                </div>
+                                <div class="month-bar">
+                                    <div class="bar" style="height: 30px;"></div>
+                                    <span>DEC</span>
+                                </div>
+                                <div class="month-bar">
+                                    <div class="bar" style="height: 30px;"></div>
+                                    <span>JAN</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blog Section -->
+            <section class="blog-section">
+                <div class="section-header">
+                    <h2>AQI Community Blog</h2>
+                </div>
+                <div class="blog-grid" id="blogGrid">
+                    <div class="empty-state" id="blogLoading">Loading posts...</div>
+                </div>
+            </section>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="{% static 'js/map.js' %}"></script>
+    <script src="{% static 'js/app.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/aqi_widget_terminal.js' %}"></script>
+
+
+
+    <script>
+        // Flip card functionality
+        document.querySelectorAll('.flip-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                btn.closest('.sensor-card-wrapper').classList.toggle('flipped');
+            });
+        });
+    </script>
+
+</body>
+
+</html>

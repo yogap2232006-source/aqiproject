@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - VOODOO DEVS - IoT Predictor</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@400;600;700&family=Work+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Topbar -->
+        <header class="topbar">
+            <button class="menu-toggle">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="search-bar">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" placeholder="Search API documentation...">
+            </div>
+
+            <div class="user-profile">
+                <div class="profile-actions">
+                    <button id="themeToggle" class="icon-btn" title="Toggle theme">
+                        <i class="fa-solid fa-sun"></i>
+                    </button>
+                    <div class="notification-wrapper">
+                        <button id="notificationBtn" class="icon-btn" title="Notifications">
+                            <i class="fa-solid fa-bell"></i>
+                            <span id="notifBadge" class="badge-dot hidden"></span>
+                        </button>
+                        <div id="notificationDropdown" class="notification-dropdown hidden">
+                            <div class="notif-header">
+                                <span>Notifications</span>
+                                <button id="clearNotifs" class="clear-btn">Clear</button>
+                            </div>
+                            <div id="notifList" class="notif-list">
+                                <div class="empty-state">No new alerts</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Settings Section -->
+        <section class="dashboard-container">
+            <div style="max-width: 900px; margin: 0 auto;">
+
+                <!-- Header -->
+                <div style="margin-bottom: 3rem;">
+                    <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem;">
+                        Open Data API for Researchers
+                    </h2>
+                    <p style="color: var(--text-secondary); font-size: 0.95rem;">
+                        Access real-time and historical AQI data for academic research, analytics,
+                        and environmental studies.
+                    </p>
+                </div>
+
+                <!-- API Overview -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem; font-weight: 600;">API Overview</h4>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                        This Open Data API provides structured access to hyperlocal air quality
+                        data collected from distributed IoT sensors deployed across urban streets.
+                    </p>
+
+                    <ul style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8;">
+                        <li>• Real-time AQI values</li>
+                        <li>• Historical pollution trends</li>
+                        <li>• Sensor-level & street-level granularity</li>
+                        <li>• JSON-based REST API</li>
+                    </ul>
+                </div>
+
+                <!-- Endpoints -->
+                <div class="card" style="margin-bottom: 1.5rem;">
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem; font-weight: 600;">Available Endpoints</h4>
+
+                    <div style="background: var(--bg-secondary); padding: 1.25rem; border-radius: 8px; 
+                                font-family: 'Courier New', monospace; font-size: 0.9rem; 
+                                line-height: 1.8; color: var(--text-secondary);
+                                overflow-x: auto; border: 1px solid var(--border-color);">
+                        <code>GET /api/aqi/latest/</code><br>
+                        <code>GET /api/aqi/history/?from=YYYY-MM-DD&to=YYYY-MM-DD</code><br>
+                        <code>GET /api/sensors/</code><br>
+                        <code>GET /api/streets/&lt;street_id&gt;/</code>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin-top: 1rem; font-size: 0.9rem;">
+                        All endpoints return structured JSON responses.
+                    </p>
+                </div>
+
+                <!-- Access Policy -->
+                <div class="card">
+                    <h4 style="font-size: 1.25rem; margin-bottom: 1rem; font-weight: 600;">Usage & Access Policy</h4>
+
+                    <ul style="font-size: 0.95rem; color: var(--text-secondary); line-height: 1.8; margin-bottom: 1.5rem;">
+                        <li>• Free access for academic and non-commercial research</li>
+                        <li>• Attribution required in published work</li>
+                        <li>• Rate limiting applied (1000 requests/day)</li>
+                        <li>• API keys may be required for extended usage</li>
+                    </ul>
+
+                    <div style="display: flex; gap: 1rem;">
+                        <button class="btn-primary">
+                            <i class="fa-solid fa-download"></i>
+                            Request API Access
+                        </button>
+                        <a href="{% url 'dashboard' %}" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center;">
+                            <i class="fa-solid fa-arrow-left"></i>
+                            Back to Dashboard
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/app.js' %}"></script>
+        <!-- ⭐ ADD THIS: AQI Widget Terminal Integration -->
+    <script src="{% static 'js/aqi_widget_terminal.js' %}"></script>
+
+</body>
+
+</html>
+ 
