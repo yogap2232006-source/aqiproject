@@ -1,3 +1,4 @@
+
 // ============================================================================
 // GLOBAL STATE
 // ============================================================================
@@ -154,6 +155,36 @@ async function searchLocation(query) {
     }
 }
 
+async function updateSensorCountBackend(count) {
+    try {
+        await fetch('api/set_sensor_count/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ count })
+        });
+    } catch (err) {
+        console.error('Failed to sync sensor count', err);
+    }
+}
+
+
+fetch('/api/manual-db-sync/', {method: 'POST'})
+  .then(r => r.json())
+  .then(d => console.log(d))
+
+
+// ============================================================================
+// BACKEND SYNC HELPER
+// ============================================================================
+async function fetchSensorData() {
+    try {
+        const response = await fetch('/get_sensor_data_simulation/');
+        const data = await response.json();
+        console.log(data);
+    } catch (error) {
+        console.error('Error fetching sensor data:', error);
+    }
+}
 
 function initSensorWidget() {
 
@@ -185,7 +216,9 @@ function initSensorWidget() {
     countEl.textContent = count;
     const markerStack = {};
     const markerGroup = L.layerGroup().addTo(map);
+
     pushMarker(count);
+    
     btnPlus.addEventListener('click', () => {
         if (count >= MAX) return;
         count++;
@@ -215,7 +248,7 @@ function initSensorWidget() {
 
         marker.addTo(markerGroup).openPopup();
         markerStack[index] = marker;
-
+        updateSensorCountBackend(count);
         console.log('PUSH →', sensor.id);
     }
 

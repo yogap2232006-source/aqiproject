@@ -12,6 +12,16 @@ class Sensor(models.Model):
 
     def __str__(self):
         return self.name or self.sensor_id
+    
+# class Sensor(models.Model):
+#     slave_id = models.IntegerField(unique=True)
+#     name = models.CharField(max_length=50)
+#     location = models.CharField(max_length=100)  # ✅ ADD THIS
+#     latitude = models.FloatField()
+#     longitude = models.FloatField()
+
+#     def __str__(self):
+#         return f"{self.name} ({self.location})"
 
 
 class Reading(models.Model):
@@ -67,7 +77,7 @@ class BlogPost(models.Model):
     )
     content = models.TextField()
     excerpt = models.TextField(blank=True)
-    image = models.ImageField(upload_to="blog/", null=True, blank=True)
+    image = models.ImageField(upload_to="img/", null=True, blank=True)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
     published_at = models.DateTimeField(null=True, blank=True)
 

@@ -21,6 +21,13 @@ import threading
 import time
 from datetime import datetime
 
+# from .import_json_loop import sync_json_to_database
+
+FILE_PATH = "static/sensor_data.json"   # path to your JSON file
+DELAY = 60                               # 1 minute
+
+
+
 logger = logging.getLogger(__name__)
 
 # ============================================================================
@@ -30,17 +37,590 @@ simulation_state = {
     'running': False,
     'thread': None,
     'logs': [],
-    'sensor_data': []
+    'sensor_data': [],
+    'sensor_count': 1 
+}
+
+db_sync_state = {
+    "running": False,
+    "thread": None,
+    "last_synced_count": 0,
+    "total_synced": 0,
 }
 
 LOG_PATH = os.path.join(settings.BASE_DIR, "static", "sensor_logs.json")
 DATA_PATH = os.path.join(settings.BASE_DIR, "static", "sensor_data.json")
 
+
+
+# SENSORS = [
+#     {"slave_id": 1, "name": "SENSOR-001", "latitude": 13.0856, "longitude": 80.2379, "location": "Taylor's Road, Kilpauk"},
+#     {"slave_id": 2, "name": "SENSOR-002", "latitude": 13.0827, "longitude": 80.2707, "location": "Egmore Station"},
+#     {"slave_id": 3, "name": "SENSOR-003", "latitude": 13.0660, "longitude": 80.2550, "location": "Anna Nagar"},
+# ]
+
 SENSORS = [
-    {"slave_id": 1, "name": "SENSOR-001", "latitude": 13.0856, "longitude": 80.2379, "location": "Taylor's Road, Kilpauk"},
-    {"slave_id": 2, "name": "SENSOR-002", "latitude": 13.0827, "longitude": 80.2707, "location": "Egmore Station"},
-    {"slave_id": 3, "name": "SENSOR-003", "latitude": 13.0660, "longitude": 80.2550, "location": "Anna Nagar"},
+    {"slave_id": 1, "name": "KP-002", "location": "Ormes Road", "latitude": 13.0818, "longitude": 80.2460},
+    {"slave_id": 2, "name": "KP-003", "location": "Flowers Road", "latitude": 13.0782, "longitude": 80.2468},
+    {"slave_id": 3, "name": "KP-005", "location": "Halls Road", "latitude": 13.0746, "longitude": 80.2513},
+    {"slave_id": 4, "name": "EG-001", "location": "Casa Major Road", "latitude": 13.0718, "longitude": 80.2548},
+    {"slave_id": 5, "name": "KP-004", "location": "Pantheon Road", "latitude": 13.0728, "longitude": 80.2574},
+    {"slave_id": 6, "name": "EG-004", "location": "Ethiraj Salai", "latitude": 13.0731, "longitude": 80.2622},
+    {"slave_id": 7, "name": "EG-005", "location": "College Road (Egmore)", "latitude": 13.0766, "longitude": 80.2625},
+    {"slave_id": 8, "name": "KP-001", "location": "Kilpauk Garden Road", "latitude": 13.0845, "longitude": 80.2390},
+    {"slave_id": 9, "name": "EG-002", "location": "Kellys Road", "latitude": 13.0882, "longitude": 80.2470},
+    {"slave_id": 10, "name": "EG-003", "location": "Commander-in-Chief Road", "latitude": 13.0910, "longitude": 80.2498}
 ]
+
+def sync_json_to_database():
+    """
+    Read the JSON array and sync only NEW records to database
+    Runs in background thread every 60 seconds
+    """
+    print("🚀 Database sync thread started (1 min interval)")
+    
+    while db_sync_state['running']:
+        try:
+            # Wait 60 seconds before next sync
+            time.sleep(DELAY)
+            
+            # Read the entire JSON array
+            with open(FILE_PATH, "r") as f:
+                all_readings = json.load(f)  # This is an ARRAY of readings
+            
+            # Get only NEW records we haven't synced yet
+            already_synced = db_sync_state['last_synced_count']
+            new_readings = all_readings[already_synced:]
+            
+            if not new_readings:
+                print("ℹ️  No new readings to sync")
+                continue
+            
+            print(f"🔄 Syncing {len(new_readings)} new readings to database...")
+            
+            synced_count = 0
+            error_count = 0
+            
+            # Loop through each NEW reading in the array
+            for reading_data in new_readings:
+                try:
+                    # Get or create sensor
+                    sensor, created = Sensor.objects.get_or_create(
+                        sensor_id=reading_data["name"],  # Use 'name' as sensor_id (e.g., "KP-002")
+                        defaults={
+                            "name": reading_data["name"],
+                            "location": reading_data["location"],
+                            "latitude": reading_data["latitude"],
+                            "longitude": reading_data["longitude"],
+                            "is_active": True,
+                        }
+                    )
+                    
+                    if created:
+                        print(f"   ➕ Created new sensor: {reading_data['name']}")
+                    
+                    # Parse timestamp
+                    timestamp = datetime.strptime(
+                        reading_data["timestamp"], 
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+                    
+                    # Create reading (use get_or_create to avoid duplicates)
+                    reading, created = Reading.objects.get_or_create(
+                        sensor=sensor,
+                        timestamp=timestamp,
+                        slave_id=reading_data["slave_id"],
+                        defaults={
+                            "temperature": reading_data.get("temperature"),
+                            "humidity": reading_data.get("humidity"),
+                            "air_quality": reading_data.get("pm25"),
+                            "no_level": reading_data.get("no2"),
+                            "co_level": reading_data.get("co"),
+                            "aqi_category": reading_data.get("aqi_category", ""),
+                            "aqi_color": reading_data.get("aqi_color", ""),
+                            "latitude": reading_data.get("latitude"),
+                            "longitude": reading_data.get("longitude"),
+                        }
+                    )
+                    
+                    if created:
+                        synced_count += 1
+                
+                except Exception as e:
+                    error_count += 1
+                    print(f"   ❌ Error syncing reading: {e}")
+            
+            # Update state
+            db_sync_state['last_synced_count'] = len(all_readings)
+            db_sync_state['total_synced'] += synced_count
+            
+            print(f"✅ Sync complete: {synced_count} added, {error_count} errors (Total synced: {db_sync_state['total_synced']})")
+            print(f"   At {timezone.now()}")
+            
+        except Exception as e:
+            print(f"❌ Database sync error: {e}")
+            import traceback
+            traceback.print_exc()
+    
+    print("🛑 Database sync thread stopped")
+
+
+# def sync_json_to_database():
+#     """
+#     Enhanced version with detailed logging to debug issues
+#     """
+#     write_log("Database sync thread started", "SYSTEM")
+#     logger.info("DB SYNC THREAD: Started successfully")
+    
+#     while db_sync_state['running']:
+#         try:
+#             # Wait 60 seconds before next sync
+#             logger.info("DB SYNC: Waiting 60 seconds...")
+#             time.sleep(60)
+            
+#             logger.info("DB SYNC: Checking for data file...")
+#             if not os.path.exists(DATA_PATH):
+#                 write_log("No data file found, skipping sync", "DEBUG")
+#                 logger.warning(f"DB SYNC: Data file not found at {DATA_PATH}")
+#                 continue
+            
+#             # Read all data from JSON file
+#             logger.info(f"DB SYNC: Reading data from {DATA_PATH}")
+#             with open(DATA_PATH, 'r') as f:
+#                 all_readings = json.load(f)
+            
+#             logger.info(f"DB SYNC: Found {len(all_readings)} total records in JSON")
+            
+#             # Get count of records we've already synced
+#             already_synced = db_sync_state['last_synced_count']
+#             logger.info(f"DB SYNC: Already synced {already_synced} records")
+            
+#             # Get only NEW records
+#             new_readings = all_readings[already_synced:]
+            
+#             if not new_readings:
+#                 write_log("No new readings to sync", "DEBUG")
+#                 logger.info("DB SYNC: No new readings to sync")
+#                 continue
+            
+#             write_log(f"Syncing {len(new_readings)} new readings to database...", "INFO")
+#             logger.info(f"DB SYNC: Starting to sync {len(new_readings)} new readings")
+            
+#             # Sync each new reading to database
+#             synced_count = 0
+#             error_count = 0
+            
+#             for idx, reading_data in enumerate(new_readings):
+#                 try:
+#                     logger.debug(f"DB SYNC: Processing reading {idx+1}/{len(new_readings)}")
+                    
+#                     # Get or create sensor
+#                     sensor_name = reading_data.get('name')
+#                     slave_id = reading_data.get('slave_id')
+                    
+#                     logger.debug(f"DB SYNC: Looking for sensor {sensor_name} (slave_id={slave_id})")
+                    
+#                     sensor, created = Sensor.objects.get_or_create(
+#                         sensor_id=sensor_name,
+#                         defaults={
+#                             'name': sensor_name,
+#                             'location': reading_data.get('location', ''),
+#                             'latitude': reading_data.get('latitude'),
+#                             'longitude': reading_data.get('longitude'),
+#                             'is_active': True
+#                         }
+#                     )
+                    
+#                     if created:
+#                         write_log(f"Created new sensor in DB: {sensor_name}", "INFO")
+#                         logger.info(f"DB SYNC: Created new sensor {sensor_name}")
+#                     else:
+#                         logger.debug(f"DB SYNC: Found existing sensor {sensor_name}")
+                    
+#                     # Parse timestamp
+#                     timestamp_str = reading_data.get('timestamp')
+#                     logger.debug(f"DB SYNC: Parsing timestamp {timestamp_str}")
+                    
+#                     timestamp = parse_datetime(timestamp_str)
+#                     if not timestamp:
+#                         try:
+#                             timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+#                         except Exception as e:
+#                             logger.error(f"DB SYNC: Failed to parse timestamp {timestamp_str}: {e}")
+#                             raise
+                    
+#                     # ⚠️ IMPORTANT: Check if your Reading model has these exact field names
+#                     # If not, you need to update the field names to match YOUR model
+                    
+#                     logger.debug(f"DB SYNC: Creating reading for {sensor_name} at {timestamp}")
+                    
+#                     reading, created = Reading.objects.get_or_create(
+#                         sensor=sensor,
+#                         timestamp=timestamp,
+#                         slave_id=slave_id,
+#                         defaults={
+#                             'temperature': reading_data.get('temperature'),
+#                             'humidity': reading_data.get('humidity'),
+#                             'air_quality': reading_data.get('pm25'),  # ⚠️ Check if your model has 'air_quality' or 'pm25'
+#                             'aqi_category': reading_data.get('aqi_category', ''),
+#                             'aqi_color': reading_data.get('aqi_color', ''),
+#                             'co_level': reading_data.get('co'),
+#                             'no_level': reading_data.get('no2'),  # ⚠️ Check if your model has 'no_level' or 'no2'
+#                             'smoke': 0.0,
+#                             'latitude': reading_data.get('latitude'),
+#                             'longitude': reading_data.get('longitude')
+#                         }
+#                     )
+                    
+#                     if created:
+#                         synced_count += 1
+#                         logger.debug(f"DB SYNC: Created new reading #{synced_count}")
+#                     else:
+#                         logger.debug(f"DB SYNC: Reading already exists (duplicate)")
+                    
+#                 except Exception as e:
+#                     error_count += 1
+#                     write_log(f"Error syncing reading: {str(e)}", "ERROR")
+#                     logger.error(f"DB SYNC ERROR on reading {idx+1}: {str(e)}")
+#                     logger.error(f"DB SYNC ERROR data: {reading_data}")
+#                     import traceback
+#                     logger.error(f"DB SYNC TRACEBACK: {traceback.format_exc()}")
+            
+#             # Update sync state
+#             db_sync_state['last_synced_count'] = len(all_readings)
+#             db_sync_state['total_synced'] += synced_count
+            
+#             write_log(
+#                 f"Database sync complete: {synced_count} new records added, {error_count} errors (Total: {db_sync_state['total_synced']})",
+#                 "SUCCESS"
+#             )
+#             logger.info(f"DB SYNC COMPLETE: {synced_count} added, {error_count} errors, total synced: {db_sync_state['total_synced']}")
+            
+#         except Exception as e:
+#             write_log(f"Database sync error: {str(e)}", "ERROR")
+#             logger.error(f"DB SYNC THREAD ERROR: {e}")
+#             import traceback
+#             logger.error(f"DB SYNC THREAD TRACEBACK: {traceback.format_exc()}")
+    
+#     write_log("Database sync thread stopped", "SYSTEM")
+#     logger.info("DB SYNC THREAD: Stopped")
+
+
+# ============================================================================
+# MANUAL SYNC ENDPOINT FOR TESTING
+# ============================================================================
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def manual_db_sync(request):
+    """
+    Manually trigger database sync for testing
+    Provides detailed feedback about what went wrong
+    """
+    try:
+        logger.info("MANUAL SYNC: Starting...")
+        
+        if not os.path.exists(DATA_PATH):
+            return JsonResponse({
+                'success': False,
+                'error': f'Data file not found at {DATA_PATH}'
+            })
+        
+        # Read data
+        with open(DATA_PATH, 'r') as f:
+            all_readings = json.load(f)
+        
+        logger.info(f"MANUAL SYNC: Found {len(all_readings)} records in JSON")
+        
+        # Get new records
+        already_synced = db_sync_state['last_synced_count']
+        new_readings = all_readings[already_synced:]
+        
+        if not new_readings:
+            return JsonResponse({
+                'success': True,
+                'message': 'No new readings to sync',
+                'total_in_json': len(all_readings),
+                'already_synced': already_synced
+            })
+        
+        logger.info(f"MANUAL SYNC: Syncing {len(new_readings)} new records")
+        
+        synced_count = 0
+        error_count = 0
+        errors = []
+        
+        for idx, reading_data in enumerate(new_readings):
+            try:
+                sensor_name = reading_data.get('name')
+                slave_id = reading_data.get('slave_id')
+                
+                sensor, created = Sensor.objects.get_or_create(
+                    sensor_id=sensor_name,
+                    defaults={
+                        'name': sensor_name,
+                        'location': reading_data.get('location', ''),
+                        'latitude': reading_data.get('latitude'),
+                        'longitude': reading_data.get('longitude'),
+                        'is_active': True
+                    }
+                )
+                
+                timestamp_str = reading_data.get('timestamp')
+                timestamp = parse_datetime(timestamp_str)
+                if not timestamp:
+                    timestamp = datetime.strptime(timestamp_str, "%Y-%m-%d %H:%M:%S")
+                
+                reading, created = Reading.objects.get_or_create(
+                    sensor=sensor,
+                    timestamp=timestamp,
+                    slave_id=slave_id,
+                    defaults={
+                        'temperature': reading_data.get('temperature'),
+                        'humidity': reading_data.get('humidity'),
+                        'air_quality': reading_data.get('pm25'),
+                        'aqi_category': reading_data.get('aqi_category', ''),
+                        'aqi_color': reading_data.get('aqi_color', ''),
+                        'co_level': reading_data.get('co'),
+                        'no_level': reading_data.get('no2'),
+                        'smoke': 0.0,
+                        'latitude': reading_data.get('latitude'),
+                        'longitude': reading_data.get('longitude')
+                    }
+                )
+                
+                if created:
+                    synced_count += 1
+                    
+            except Exception as e:
+                error_count += 1
+                errors.append({
+                    'index': idx,
+                    'error': str(e),
+                    'data': reading_data
+                })
+                logger.error(f"MANUAL SYNC ERROR on record {idx}: {e}")
+        
+        # Update state
+        db_sync_state['last_synced_count'] = len(all_readings)
+        db_sync_state['total_synced'] += synced_count
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Manual sync complete',
+            'synced_count': synced_count,
+            'error_count': error_count,
+            'total_synced': db_sync_state['total_synced'],
+            'errors': errors[:5]  # Return first 5 errors for debugging
+        })
+        
+    except Exception as e:
+        logger.error(f"MANUAL SYNC FAILED: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        return JsonResponse({
+            'success': False,
+            'error': str(e),
+            'traceback': traceback.format_exc()
+        }, status=500)
+
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def start_simulation(request):
+    """Start the sensor simulation AND database sync automatically"""
+    if simulation_state['running']:
+        return JsonResponse({
+            'success': False,
+            'message': 'Simulation already running'
+        })
+    
+    # Clear old logs
+    simulation_state['logs'] = []
+    
+    # Start simulation in background thread
+    simulation_state['running'] = True
+    simulation_state['thread'] = threading.Thread(target=simulation_loop, daemon=True)
+    simulation_state['thread'].start()
+    
+    # ✅ AUTO-START DATABASE SYNC
+    if not db_sync_state['running']:
+        db_sync_state['running'] = True
+        db_sync_state['last_synced_count'] = 0
+        db_sync_state['total_synced'] = 0
+        db_sync_state['thread'] = threading.Thread(target=sync_json_to_database, daemon=True)
+        db_sync_state['thread'].start()
+        write_log("Database sync auto-started (1-minute interval)", "SYSTEM")
+        print("🚀 Database sync auto-started")
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Simulation and database sync started successfully'
+    })
+
+
+# ============================================================================
+# MODIFIED START_SIMULATION - AUTO-START DB SYNC
+# ============================================================================
+
+# @csrf_exempt
+# @require_http_methods(["POST"])
+# def start_simulation(request):
+#     """Start the sensor simulation AND database sync automatically"""
+#     if simulation_state['running']:
+#         return JsonResponse({
+#             'success': False,
+#             'message': 'Simulation already running'
+#         })
+    
+#     # Clear old logs
+#     simulation_state['logs'] = []
+    
+#     # Start simulation in background thread
+#     simulation_state['running'] = True
+#     simulation_state['thread'] = threading.Thread(target=simulation_loop, daemon=True)
+#     simulation_state['thread'].start()
+    
+#     # ✅ AUTO-START DATABASE SYNC
+#     if not db_sync_state['running']:
+#         db_sync_state['running'] = True
+#         db_sync_state['last_synced_count'] = 0
+#         db_sync_state['thread'] = threading.Thread(target=sync_json_to_database, daemon=True)
+#         db_sync_state['thread'].start()
+#         write_log("Database sync auto-started (1-minute interval)", "SYSTEM")
+    
+#     return JsonResponse({
+#         'success': True,
+#         'message': 'Simulation and database sync started successfully'
+#     })
+
+
+# # ============================================================================
+# # MODIFIED STOP_SIMULATION - AUTO-STOP DB SYNC
+# # ============================================================================
+
+# @csrf_exempt
+# @require_http_methods(["POST"])
+# def stop_simulation(request):
+#     """Stop the sensor simulation AND database sync"""
+#     if not simulation_state['running']:
+#         return JsonResponse({
+#             'success': False,
+#             'message': 'Simulation not running'
+#         })
+    
+#     # Stop simulation
+#     simulation_state['running'] = False
+#     if simulation_state['thread']:
+#         simulation_state['thread'].join(timeout=2)
+    
+#     # ✅ AUTO-STOP DATABASE SYNC
+#     if db_sync_state['running']:
+#         db_sync_state['running'] = False
+#         if db_sync_state['thread']:
+#             db_sync_state['thread'].join(timeout=2)
+#         write_log(f"Database sync stopped (Total synced: {db_sync_state['total_synced']})", "SYSTEM")
+    
+#     return JsonResponse({
+#         'success': True,
+#         'message': 'Simulation and database sync stopped',
+#         'total_synced_to_db': db_sync_state['total_synced']
+#     })
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def stop_simulation(request):
+    """Stop the sensor simulation AND database sync"""
+    if not simulation_state['running']:
+        return JsonResponse({
+            'success': False,
+            'message': 'Simulation not running'
+        })
+    
+    # Stop simulation
+    simulation_state['running'] = False
+    if simulation_state['thread']:
+        simulation_state['thread'].join(timeout=2)
+    
+    # ✅ AUTO-STOP DATABASE SYNC
+    if db_sync_state['running']:
+        db_sync_state['running'] = False
+        if db_sync_state['thread']:
+            db_sync_state['thread'].join(timeout=2)
+        write_log(f"Database sync stopped (Total synced: {db_sync_state['total_synced']})", "SYSTEM")
+        print(f"🛑 Database sync stopped (Total synced: {db_sync_state['total_synced']})")
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Simulation and database sync stopped',
+        'total_synced_to_db': db_sync_state['total_synced']
+    })
+
+# ============================================================================
+# MODIFIED RESET_SIMULATION - RESET DB SYNC STATE
+# ============================================================================
+
+@csrf_exempt
+@require_http_methods(["POST"])
+def reset_simulation(request):
+    """Reset the simulation, clear logs, AND reset DB sync state"""
+    # Stop if running
+    if simulation_state['running']:
+        simulation_state['running'] = False
+        if simulation_state['thread']:
+            simulation_state['thread'].join(timeout=2)
+    
+    # Stop DB sync if running
+    if db_sync_state['running']:
+        db_sync_state['running'] = False
+        if db_sync_state['thread']:
+            db_sync_state['thread'].join(timeout=2)
+    
+    # Clear logs and data
+    simulation_state['logs'] = []
+    simulation_state['sensor_data'] = []
+    
+    # ✅ RESET DB SYNC STATE
+    db_sync_state['last_synced_count'] = 0
+    db_sync_state['total_synced'] = 0
+    
+    # Clear files
+    try:
+        with open(LOG_PATH, "w") as f:
+            json.dump([], f)
+        with open(DATA_PATH, "w") as f:
+            json.dump([], f)
+    except:
+        pass
+    
+    return JsonResponse({
+        'success': True,
+        'message': 'Simulation and database sync reset'
+    })
+
+
+# ============================================================================
+# STATUS ENDPOINT - INCLUDES DB SYNC INFO
+# ============================================================================
+
+@require_http_methods(["GET"])
+def simulation_status(request):
+    """Get simulation status including database sync info"""
+    with simulation_lock:
+        current_count = simulation_state.get('sensor_count', 1)
+    
+    return JsonResponse({
+        'running': simulation_state['running'],
+        'log_count': len(simulation_state['logs']),
+        'sensor_count': len(simulation_state['sensor_data']),
+        'active_sensor_count': current_count,
+        # ✅ DB SYNC STATUS
+        'db_sync_running': db_sync_state['running'],
+        'db_sync_total_synced': db_sync_state['total_synced'],
+        'db_sync_last_count': db_sync_state['last_synced_count']
+    })
+
+
 
 
 def write_log(message, level="INFO"):
@@ -111,9 +691,8 @@ def generate_sensor_reading(sensor):
 simulation_lock = threading.Lock()
 
 def simulation_loop():
-    """Main simulation loop that runs in background thread - FIXED VERSION"""
+    """Main simulation loop that runs in background thread - respects sensor_count"""
     write_log("Sensor simulation initialized", "SYSTEM")
-    write_log(f"Monitoring {len(SENSORS)} sensors", "INFO")
     
     iteration = 0
     
@@ -130,7 +709,7 @@ def simulation_loop():
         if os.path.exists(DATA_PATH):
             with open(DATA_PATH, "r") as f:
                 content = f.read()
-                if content.strip():  # Check if file is not empty
+                if content.strip():
                     all_historical_data = json.loads(content)
                     write_log(f"Loaded {len(all_historical_data)} existing readings", "INFO")
                 else:
@@ -149,8 +728,15 @@ def simulation_loop():
             iteration += 1
             simulated_data = []
             
-            # Generate readings for all sensors
-            for sensor in SENSORS:
+            # ✅ GET ACTIVE SENSOR COUNT FROM STATE
+            with simulation_lock:
+                active_count = simulation_state.get('sensor_count', 1)
+            
+            write_log(f"Monitoring {active_count} sensors", "INFO")
+            
+            # ✅ ONLY GENERATE DATA FOR ACTIVE SENSORS
+            for i in range(active_count):
+                sensor = SENSORS[i]  # Use first N sensors based on count
                 reading = generate_sensor_reading(sensor)
                 simulated_data.append(reading)
                 
@@ -167,7 +753,6 @@ def simulation_loop():
             all_historical_data.extend(simulated_data)
             
             # Limit history to prevent file from growing too large
-            # Keep last 1000 readings (adjust as needed)
             MAX_HISTORY = 1000
             if len(all_historical_data) > MAX_HISTORY:
                 old_count = len(all_historical_data)
@@ -176,12 +761,10 @@ def simulation_loop():
             
             # Write complete history to file
             try:
-                # Write to temporary file first, then rename (atomic operation)
                 temp_path = DATA_PATH + ".tmp"
                 with open(temp_path, "w") as f:
                     json.dump(all_historical_data, f, indent=2)
                 
-                # Rename temp file to actual file (atomic on most systems)
                 os.replace(temp_path, DATA_PATH)
                 
                 write_log(f"Saved {len(all_historical_data)} total readings to file", "DEBUG")
@@ -189,7 +772,7 @@ def simulation_loop():
             except Exception as e:
                 write_log(f"Error writing history file: {e}", "ERROR")
             
-            write_log(f"Network scan #{iteration} complete - All sensors online (Total history: {len(all_historical_data)})", "SUCCESS")
+            write_log(f"Network scan #{iteration} complete - {active_count} sensors online (Total history: {len(all_historical_data)})", "SUCCESS")
             
             # Wait 3 seconds before next reading
             time.sleep(3)
@@ -325,27 +908,59 @@ def debug_simulation_files(request):
 # SIMULATION API ENDPOINTS (NEW)
 # ============================================================================
 
-@csrf_exempt
-@require_http_methods(["POST"])
+# @csrf_exempt
+# @require_http_methods(["POST"])
+# def start_simulation(request):
+#     """Start the sensor simulation"""
+#     if simulation_state['running']:
+#         return JsonResponse({
+#             'success': False,
+#             'message': 'Simulation already running'
+#         })
+    
+#     # Clear old logs
+#     simulation_state['logs'] = []
+    
+#     # Start simulation in background thread
+#     simulation_state['running'] = True
+#     simulation_state['thread'] = threading.Thread(target=simulation_loop, daemon=True)
+#     simulation_state['thread'].start()
+    
+#     return JsonResponse({
+#         'success': True,
+#         'message': 'Simulation started successfully'
+#     })
 def start_simulation(request):
-    """Start the sensor simulation"""
-    if simulation_state['running']:
+    if simulation_state["running"]:
         return JsonResponse({
-            'success': False,
-            'message': 'Simulation already running'
+            "success": False,
+            "message": "Simulation already running"
         })
-    
-    # Clear old logs
-    simulation_state['logs'] = []
-    
-    # Start simulation in background thread
-    simulation_state['running'] = True
-    simulation_state['thread'] = threading.Thread(target=simulation_loop, daemon=True)
-    simulation_state['thread'].start()
-    
+
+    simulation_state["logs"] = []
+    simulation_state["running"] = True
+
+    # --- Start simulation loop ---
+    simulation_state["thread"] = threading.Thread(
+        target=simulation_loop,
+        daemon=True
+    )
+    simulation_state["thread"].start()
+
+    # --- Auto-start DB sync ---
+    if not db_sync_state["running"]:
+        db_sync_state["running"] = True
+        db_sync_state["thread"] = threading.Thread(
+            target=sync_json_to_database,
+            daemon=True
+        )
+        db_sync_state["thread"].start()
+
+        write_log("Database sync auto-started (1-minute interval)", "SYSTEM")
+
     return JsonResponse({
-        'success': True,
-        'message': 'Simulation started successfully'
+        "success": True,
+        "message": "Simulation and database sync started successfully"
     })
 
 
@@ -399,6 +1014,26 @@ def reset_simulation(request):
         'message': 'Simulation reset'
     })
 
+@csrf_exempt
+@require_http_methods(["POST"])
+@csrf_exempt
+@require_http_methods(["POST"])
+def set_sensor_count(request):
+    """Update the active sensor count for simulation"""
+    body = json.loads(request.body)
+    count = int(body.get("count", 1))
+    
+    # Clamp between 1 and 10
+    count = max(1, min(10, count))
+
+    with simulation_lock:
+        simulation_state["sensor_count"] = count
+
+    return JsonResponse({
+        "success": True,
+        "sensor_count": count
+    })
+
 
 @require_http_methods(["GET"])
 def get_logs(request):
@@ -417,6 +1052,7 @@ def get_sensor_data_simulation(request):
         'running': simulation_state['running']
     })
 
+print('running')
 
 @require_http_methods(["GET"])
 def simulation_status(request):
@@ -698,5 +1334,3 @@ def bulk_ingest_readings(request):
     status_code = status.HTTP_201_CREATED if created_readings else status.HTTP_400_BAD_REQUEST
     
     return Response(response_data, status=status_code)
-
-

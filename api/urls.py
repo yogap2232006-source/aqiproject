@@ -15,6 +15,8 @@ from .views import (
     get_sensor_data_simulation,
     debug_simulation_files,
     get_sensor_history,
+    set_sensor_count,
+    manual_db_sync,
 )
 
 
@@ -41,5 +43,8 @@ urlpatterns = router.urls + [
 
     path('simulation/debug/', debug_simulation_files, name='debug-simulation'),
     path('simulation/history/', get_sensor_history, name='sensor-history'),
+    path('set_sensor_count/', set_sensor_count), 
+    path('manual-db-sync/', manual_db_sync, name='manual_db_sync'),
+
 
 ]
