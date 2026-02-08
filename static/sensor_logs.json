@@ -1,1002 +1,917 @@
 [
   {
-    "timestamp": "08:12:13",
-    "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "timestamp": "15:36:47",
+    "level": "SYSTEM",
+    "message": "Sensor simulation initialized"
   },
   {
-    "timestamp": "08:12:13",
+    "timestamp": "15:36:47",
+    "level": "SYSTEM",
+    "message": "Database sync auto-started (1-minute interval)"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "DEBUG",
+    "message": "Data file path: C:\\Users\\Kjswn\\OneDrive\\Desktop\\aqi_project\\aqiproject\\static\\sensor_data.json"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "DEBUG",
+    "message": "Directory created/verified: C:\\Users\\Kjswn\\OneDrive\\Desktop\\aqi_project\\aqiproject\\static"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "INFO",
+    "message": "Loaded 1000 existing readings"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 76 (Moderate) | PM2.5: 76.7 \u00b5g/m\u00b3 | Temp: 24.2\u00b0C"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 34 (Excellent) | PM2.5: 34.3 \u00b5g/m\u00b3 | Temp: 25.0\u00b0C"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 84 (Moderate) | PM2.5: 84.3 \u00b5g/m\u00b3 | Temp: 32.0\u00b0C"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 71 (Moderate) | PM2.5: 71.9 \u00b5g/m\u00b3 | Temp: 25.8\u00b0C"
+  },
+  {
+    "timestamp": "15:36:47",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:36:47",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:13",
+    "timestamp": "15:36:47",
     "level": "SUCCESS",
-    "message": "Network scan #140 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #1 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:50",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:50",
     "level": "DATA",
-    "message": "KP-002 | AQI: 129 (Unhealthy) | PM2.5: 114.6 \u00b5g/m\u00b3 | Temp: 23.7\u00b0C"
+    "message": "KP-002 | AQI: 106 (Unhealthy) | PM2.5: 103.1 \u00b5g/m\u00b3 | Temp: 20.4\u00b0C"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:50",
     "level": "DATA",
-    "message": "KP-003 | AQI: 117 (Unhealthy) | PM2.5: 108.8 \u00b5g/m\u00b3 | Temp: 25.0\u00b0C"
+    "message": "KP-003 | AQI: 162 (Unhealthy) | PM2.5: 131.1 \u00b5g/m\u00b3 | Temp: 29.4\u00b0C"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:50",
     "level": "DATA",
-    "message": "KP-005 | AQI: 130 (Unhealthy) | PM2.5: 115.1 \u00b5g/m\u00b3 | Temp: 34.7\u00b0C"
+    "message": "KP-005 | AQI: 12 (Excellent) | PM2.5: 12.6 \u00b5g/m\u00b3 | Temp: 23.4\u00b0C"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:50",
     "level": "DATA",
-    "message": "EG-001 | AQI: 72 (Moderate) | PM2.5: 72.1 \u00b5g/m\u00b3 | Temp: 25.6\u00b0C"
+    "message": "EG-001 | AQI: 113 (Unhealthy) | PM2.5: 106.5 \u00b5g/m\u00b3 | Temp: 22.8\u00b0C"
   },
   {
-    "timestamp": "08:12:16",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 62 (Moderate) | PM2.5: 62.6 \u00b5g/m\u00b3 | Temp: 24.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:16",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 36 (Excellent) | PM2.5: 36.8 \u00b5g/m\u00b3 | Temp: 21.0\u00b0C"
-  },
-  {
-    "timestamp": "08:12:16",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 23 (Excellent) | PM2.5: 23.6 \u00b5g/m\u00b3 | Temp: 32.0\u00b0C"
-  },
-  {
-    "timestamp": "08:12:16",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 82 (Moderate) | PM2.5: 82.7 \u00b5g/m\u00b3 | Temp: 22.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:16",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 138 (Unhealthy) | PM2.5: 119.1 \u00b5g/m\u00b3 | Temp: 20.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:16",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 71 (Moderate) | PM2.5: 71.5 \u00b5g/m\u00b3 | Temp: 29.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:50",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:51",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:16",
+    "timestamp": "15:36:51",
     "level": "SUCCESS",
-    "message": "Network scan #141 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #2 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "DATA",
-    "message": "KP-002 | AQI: 28 (Excellent) | PM2.5: 28.4 \u00b5g/m\u00b3 | Temp: 28.8\u00b0C"
+    "message": "KP-002 | AQI: 88 (Moderate) | PM2.5: 88.7 \u00b5g/m\u00b3 | Temp: 34.6\u00b0C"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "DATA",
-    "message": "KP-003 | AQI: 20 (Excellent) | PM2.5: 20.2 \u00b5g/m\u00b3 | Temp: 25.7\u00b0C"
+    "message": "KP-003 | AQI: 12 (Excellent) | PM2.5: 12.7 \u00b5g/m\u00b3 | Temp: 24.2\u00b0C"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "DATA",
-    "message": "KP-005 | AQI: 62 (Moderate) | PM2.5: 62.6 \u00b5g/m\u00b3 | Temp: 26.5\u00b0C"
+    "message": "KP-005 | AQI: 194 (Unhealthy) | PM2.5: 147.3 \u00b5g/m\u00b3 | Temp: 31.4\u00b0C"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "DATA",
-    "message": "EG-001 | AQI: 196 (Unhealthy) | PM2.5: 148.4 \u00b5g/m\u00b3 | Temp: 26.9\u00b0C"
+    "message": "EG-001 | AQI: 88 (Moderate) | PM2.5: 88.0 \u00b5g/m\u00b3 | Temp: 25.1\u00b0C"
   },
   {
-    "timestamp": "08:12:19",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 177 (Unhealthy) | PM2.5: 138.8 \u00b5g/m\u00b3 | Temp: 30.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:19",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 66 (Moderate) | PM2.5: 66.7 \u00b5g/m\u00b3 | Temp: 34.1\u00b0C"
-  },
-  {
-    "timestamp": "08:12:19",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 51 (Moderate) | PM2.5: 51.3 \u00b5g/m\u00b3 | Temp: 21.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:19",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 32 (Excellent) | PM2.5: 32.8 \u00b5g/m\u00b3 | Temp: 25.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:19",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 32 (Excellent) | PM2.5: 32.5 \u00b5g/m\u00b3 | Temp: 21.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:19",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 175 (Unhealthy) | PM2.5: 137.6 \u00b5g/m\u00b3 | Temp: 29.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:19",
+    "timestamp": "15:36:54",
     "level": "SUCCESS",
-    "message": "Network scan #142 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #3 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "DATA",
-    "message": "KP-002 | AQI: 111 (Unhealthy) | PM2.5: 105.5 \u00b5g/m\u00b3 | Temp: 21.8\u00b0C"
+    "message": "KP-002 | AQI: 168 (Unhealthy) | PM2.5: 134.3 \u00b5g/m\u00b3 | Temp: 32.5\u00b0C"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "DATA",
-    "message": "KP-003 | AQI: 61 (Moderate) | PM2.5: 61.1 \u00b5g/m\u00b3 | Temp: 29.8\u00b0C"
+    "message": "KP-003 | AQI: 42 (Excellent) | PM2.5: 42.3 \u00b5g/m\u00b3 | Temp: 24.4\u00b0C"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "DATA",
-    "message": "KP-005 | AQI: 128 (Unhealthy) | PM2.5: 114.3 \u00b5g/m\u00b3 | Temp: 21.1\u00b0C"
+    "message": "KP-005 | AQI: 58 (Moderate) | PM2.5: 58.6 \u00b5g/m\u00b3 | Temp: 23.6\u00b0C"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "DATA",
-    "message": "EG-001 | AQI: 107 (Unhealthy) | PM2.5: 103.6 \u00b5g/m\u00b3 | Temp: 28.0\u00b0C"
+    "message": "EG-001 | AQI: 32 (Excellent) | PM2.5: 32.6 \u00b5g/m\u00b3 | Temp: 28.1\u00b0C"
   },
   {
-    "timestamp": "08:12:22",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 35 (Excellent) | PM2.5: 35.9 \u00b5g/m\u00b3 | Temp: 27.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:22",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 42 (Excellent) | PM2.5: 42.7 \u00b5g/m\u00b3 | Temp: 33.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:22",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 61 (Moderate) | PM2.5: 61.2 \u00b5g/m\u00b3 | Temp: 21.0\u00b0C"
-  },
-  {
-    "timestamp": "08:12:22",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 162 (Unhealthy) | PM2.5: 131.3 \u00b5g/m\u00b3 | Temp: 33.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:22",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 75 (Moderate) | PM2.5: 75.3 \u00b5g/m\u00b3 | Temp: 27.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:22",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 82 (Moderate) | PM2.5: 82.2 \u00b5g/m\u00b3 | Temp: 25.2\u00b0C"
-  },
-  {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:22",
+    "timestamp": "15:36:57",
     "level": "SUCCESS",
-    "message": "Network scan #143 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #4 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:25",
+    "timestamp": "15:37:00",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:25",
+    "timestamp": "15:37:00",
     "level": "DATA",
-    "message": "KP-002 | AQI: 23 (Excellent) | PM2.5: 23.0 \u00b5g/m\u00b3 | Temp: 22.6\u00b0C"
+    "message": "KP-002 | AQI: 83 (Moderate) | PM2.5: 83.1 \u00b5g/m\u00b3 | Temp: 31.6\u00b0C"
   },
   {
-    "timestamp": "08:12:25",
+    "timestamp": "15:37:00",
     "level": "DATA",
-    "message": "KP-003 | AQI: 77 (Moderate) | PM2.5: 77.3 \u00b5g/m\u00b3 | Temp: 26.7\u00b0C"
+    "message": "KP-003 | AQI: 73 (Moderate) | PM2.5: 73.2 \u00b5g/m\u00b3 | Temp: 34.3\u00b0C"
   },
   {
-    "timestamp": "08:12:25",
+    "timestamp": "15:37:00",
     "level": "DATA",
-    "message": "KP-005 | AQI: 39 (Excellent) | PM2.5: 39.3 \u00b5g/m\u00b3 | Temp: 25.0\u00b0C"
+    "message": "KP-005 | AQI: 67 (Moderate) | PM2.5: 67.8 \u00b5g/m\u00b3 | Temp: 25.3\u00b0C"
   },
   {
-    "timestamp": "08:12:25",
+    "timestamp": "15:37:00",
     "level": "DATA",
-    "message": "EG-001 | AQI: 17 (Excellent) | PM2.5: 17.0 \u00b5g/m\u00b3 | Temp: 21.0\u00b0C"
+    "message": "EG-001 | AQI: 73 (Moderate) | PM2.5: 73.9 \u00b5g/m\u00b3 | Temp: 20.5\u00b0C"
   },
   {
-    "timestamp": "08:12:25",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 56 (Moderate) | PM2.5: 56.4 \u00b5g/m\u00b3 | Temp: 24.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:25",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 123 (Unhealthy) | PM2.5: 111.9 \u00b5g/m\u00b3 | Temp: 20.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:25",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 68 (Moderate) | PM2.5: 68.3 \u00b5g/m\u00b3 | Temp: 26.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:25",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 68 (Moderate) | PM2.5: 68.3 \u00b5g/m\u00b3 | Temp: 29.2\u00b0C"
-  },
-  {
-    "timestamp": "08:12:25",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 97 (Moderate) | PM2.5: 97.0 \u00b5g/m\u00b3 | Temp: 30.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:25",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 19 (Excellent) | PM2.5: 19.6 \u00b5g/m\u00b3 | Temp: 24.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:25",
+    "timestamp": "15:37:00",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:26",
+    "timestamp": "15:37:00",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:26",
+    "timestamp": "15:37:00",
     "level": "SUCCESS",
-    "message": "Network scan #144 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #5 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "DATA",
-    "message": "KP-002 | AQI: 32 (Excellent) | PM2.5: 32.0 \u00b5g/m\u00b3 | Temp: 34.1\u00b0C"
+    "message": "KP-002 | AQI: 168 (Unhealthy) | PM2.5: 134.0 \u00b5g/m\u00b3 | Temp: 24.1\u00b0C"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "DATA",
-    "message": "KP-003 | AQI: 84 (Moderate) | PM2.5: 84.4 \u00b5g/m\u00b3 | Temp: 26.1\u00b0C"
+    "message": "KP-003 | AQI: 186 (Unhealthy) | PM2.5: 143.3 \u00b5g/m\u00b3 | Temp: 26.1\u00b0C"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "DATA",
-    "message": "KP-005 | AQI: 13 (Excellent) | PM2.5: 13.3 \u00b5g/m\u00b3 | Temp: 34.5\u00b0C"
+    "message": "KP-005 | AQI: 48 (Excellent) | PM2.5: 48.4 \u00b5g/m\u00b3 | Temp: 24.1\u00b0C"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "DATA",
-    "message": "EG-001 | AQI: 56 (Moderate) | PM2.5: 56.3 \u00b5g/m\u00b3 | Temp: 31.6\u00b0C"
+    "message": "EG-001 | AQI: 34 (Excellent) | PM2.5: 34.9 \u00b5g/m\u00b3 | Temp: 29.1\u00b0C"
   },
   {
-    "timestamp": "08:12:29",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 187 (Unhealthy) | PM2.5: 143.5 \u00b5g/m\u00b3 | Temp: 23.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:29",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 46 (Excellent) | PM2.5: 46.7 \u00b5g/m\u00b3 | Temp: 29.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:29",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 50 (Moderate) | PM2.5: 50.5 \u00b5g/m\u00b3 | Temp: 27.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:29",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 97 (Moderate) | PM2.5: 97.6 \u00b5g/m\u00b3 | Temp: 33.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:29",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 32 (Excellent) | PM2.5: 32.4 \u00b5g/m\u00b3 | Temp: 20.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:29",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 71 (Moderate) | PM2.5: 71.7 \u00b5g/m\u00b3 | Temp: 28.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:29",
+    "timestamp": "15:37:03",
     "level": "SUCCESS",
-    "message": "Network scan #145 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #6 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "DATA",
-    "message": "KP-002 | AQI: 108 (Unhealthy) | PM2.5: 104.3 \u00b5g/m\u00b3 | Temp: 28.5\u00b0C"
+    "message": "KP-002 | AQI: 115 (Unhealthy) | PM2.5: 107.9 \u00b5g/m\u00b3 | Temp: 21.2\u00b0C"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "DATA",
-    "message": "KP-003 | AQI: 123 (Unhealthy) | PM2.5: 111.8 \u00b5g/m\u00b3 | Temp: 29.4\u00b0C"
+    "message": "KP-003 | AQI: 193 (Unhealthy) | PM2.5: 146.7 \u00b5g/m\u00b3 | Temp: 23.7\u00b0C"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "DATA",
-    "message": "KP-005 | AQI: 109 (Unhealthy) | PM2.5: 104.5 \u00b5g/m\u00b3 | Temp: 28.5\u00b0C"
+    "message": "KP-005 | AQI: 188 (Unhealthy) | PM2.5: 144.1 \u00b5g/m\u00b3 | Temp: 20.8\u00b0C"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "DATA",
-    "message": "EG-001 | AQI: 139 (Unhealthy) | PM2.5: 119.5 \u00b5g/m\u00b3 | Temp: 32.9\u00b0C"
+    "message": "EG-001 | AQI: 111 (Unhealthy) | PM2.5: 105.6 \u00b5g/m\u00b3 | Temp: 21.1\u00b0C"
   },
   {
-    "timestamp": "08:12:32",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 16 (Excellent) | PM2.5: 16.2 \u00b5g/m\u00b3 | Temp: 20.1\u00b0C"
-  },
-  {
-    "timestamp": "08:12:32",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 28 (Excellent) | PM2.5: 28.9 \u00b5g/m\u00b3 | Temp: 28.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:32",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 81 (Moderate) | PM2.5: 81.7 \u00b5g/m\u00b3 | Temp: 28.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:32",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 150 (Unhealthy) | PM2.5: 125.0 \u00b5g/m\u00b3 | Temp: 22.2\u00b0C"
-  },
-  {
-    "timestamp": "08:12:32",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 88 (Moderate) | PM2.5: 88.1 \u00b5g/m\u00b3 | Temp: 30.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:32",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 70 (Moderate) | PM2.5: 70.1 \u00b5g/m\u00b3 | Temp: 25.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:32",
+    "timestamp": "15:37:06",
     "level": "SUCCESS",
-    "message": "Network scan #146 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #7 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "DATA",
-    "message": "KP-002 | AQI: 35 (Excellent) | PM2.5: 35.8 \u00b5g/m\u00b3 | Temp: 26.2\u00b0C"
+    "message": "KP-002 | AQI: 93 (Moderate) | PM2.5: 93.1 \u00b5g/m\u00b3 | Temp: 25.8\u00b0C"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "DATA",
-    "message": "KP-003 | AQI: 43 (Excellent) | PM2.5: 43.8 \u00b5g/m\u00b3 | Temp: 24.3\u00b0C"
+    "message": "KP-003 | AQI: 162 (Unhealthy) | PM2.5: 131.3 \u00b5g/m\u00b3 | Temp: 31.9\u00b0C"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "DATA",
-    "message": "KP-005 | AQI: 29 (Excellent) | PM2.5: 29.8 \u00b5g/m\u00b3 | Temp: 27.9\u00b0C"
+    "message": "KP-005 | AQI: 23 (Excellent) | PM2.5: 23.5 \u00b5g/m\u00b3 | Temp: 21.0\u00b0C"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "DATA",
-    "message": "EG-001 | AQI: 27 (Excellent) | PM2.5: 27.6 \u00b5g/m\u00b3 | Temp: 25.7\u00b0C"
+    "message": "EG-001 | AQI: 121 (Unhealthy) | PM2.5: 110.6 \u00b5g/m\u00b3 | Temp: 27.7\u00b0C"
   },
   {
-    "timestamp": "08:12:35",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 28 (Excellent) | PM2.5: 28.0 \u00b5g/m\u00b3 | Temp: 25.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:35",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 98 (Moderate) | PM2.5: 98.3 \u00b5g/m\u00b3 | Temp: 22.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:35",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 11 (Excellent) | PM2.5: 11.7 \u00b5g/m\u00b3 | Temp: 28.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:35",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 169 (Unhealthy) | PM2.5: 134.7 \u00b5g/m\u00b3 | Temp: 32.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:35",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 79 (Moderate) | PM2.5: 79.5 \u00b5g/m\u00b3 | Temp: 33.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:35",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 59 (Moderate) | PM2.5: 59.1 \u00b5g/m\u00b3 | Temp: 26.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:35",
+    "timestamp": "15:37:09",
     "level": "SUCCESS",
-    "message": "Network scan #147 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #8 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:38",
+    "timestamp": "15:37:12",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:38",
+    "timestamp": "15:37:12",
     "level": "DATA",
-    "message": "KP-002 | AQI: 14 (Excellent) | PM2.5: 14.9 \u00b5g/m\u00b3 | Temp: 25.1\u00b0C"
+    "message": "KP-002 | AQI: 82 (Moderate) | PM2.5: 82.3 \u00b5g/m\u00b3 | Temp: 22.8\u00b0C"
   },
   {
-    "timestamp": "08:12:38",
+    "timestamp": "15:37:12",
     "level": "DATA",
-    "message": "KP-003 | AQI: 195 (Unhealthy) | PM2.5: 147.5 \u00b5g/m\u00b3 | Temp: 27.7\u00b0C"
+    "message": "KP-003 | AQI: 45 (Excellent) | PM2.5: 45.2 \u00b5g/m\u00b3 | Temp: 27.5\u00b0C"
   },
   {
-    "timestamp": "08:12:38",
+    "timestamp": "15:37:12",
     "level": "DATA",
-    "message": "KP-005 | AQI: 94 (Moderate) | PM2.5: 94.3 \u00b5g/m\u00b3 | Temp: 29.1\u00b0C"
+    "message": "KP-005 | AQI: 101 (Unhealthy) | PM2.5: 100.7 \u00b5g/m\u00b3 | Temp: 32.0\u00b0C"
   },
   {
-    "timestamp": "08:12:38",
+    "timestamp": "15:37:12",
     "level": "DATA",
-    "message": "EG-001 | AQI: 52 (Moderate) | PM2.5: 52.8 \u00b5g/m\u00b3 | Temp: 21.2\u00b0C"
+    "message": "EG-001 | AQI: 91 (Moderate) | PM2.5: 91.2 \u00b5g/m\u00b3 | Temp: 25.4\u00b0C"
   },
   {
-    "timestamp": "08:12:38",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 184 (Unhealthy) | PM2.5: 142.0 \u00b5g/m\u00b3 | Temp: 27.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:38",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 125 (Unhealthy) | PM2.5: 112.7 \u00b5g/m\u00b3 | Temp: 26.1\u00b0C"
-  },
-  {
-    "timestamp": "08:12:38",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 32 (Excellent) | PM2.5: 32.9 \u00b5g/m\u00b3 | Temp: 21.2\u00b0C"
-  },
-  {
-    "timestamp": "08:12:38",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 49 (Excellent) | PM2.5: 49.3 \u00b5g/m\u00b3 | Temp: 28.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:38",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 106 (Unhealthy) | PM2.5: 103.2 \u00b5g/m\u00b3 | Temp: 34.1\u00b0C"
-  },
-  {
-    "timestamp": "08:12:38",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 122 (Unhealthy) | PM2.5: 111.2 \u00b5g/m\u00b3 | Temp: 20.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:39",
+    "timestamp": "15:37:12",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:39",
+    "timestamp": "15:37:12",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:39",
+    "timestamp": "15:37:12",
     "level": "SUCCESS",
-    "message": "Network scan #148 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #9 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "DATA",
-    "message": "KP-002 | AQI: 48 (Excellent) | PM2.5: 48.9 \u00b5g/m\u00b3 | Temp: 24.8\u00b0C"
+    "message": "KP-002 | AQI: 26 (Excellent) | PM2.5: 26.4 \u00b5g/m\u00b3 | Temp: 27.9\u00b0C"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "DATA",
-    "message": "KP-003 | AQI: 11 (Excellent) | PM2.5: 11.8 \u00b5g/m\u00b3 | Temp: 24.9\u00b0C"
+    "message": "KP-003 | AQI: 139 (Unhealthy) | PM2.5: 119.7 \u00b5g/m\u00b3 | Temp: 25.8\u00b0C"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "DATA",
-    "message": "KP-005 | AQI: 124 (Unhealthy) | PM2.5: 112.0 \u00b5g/m\u00b3 | Temp: 33.8\u00b0C"
+    "message": "KP-005 | AQI: 68 (Moderate) | PM2.5: 68.0 \u00b5g/m\u00b3 | Temp: 23.6\u00b0C"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "DATA",
-    "message": "EG-001 | AQI: 32 (Excellent) | PM2.5: 32.9 \u00b5g/m\u00b3 | Temp: 25.3\u00b0C"
+    "message": "EG-001 | AQI: 42 (Excellent) | PM2.5: 42.2 \u00b5g/m\u00b3 | Temp: 21.0\u00b0C"
   },
   {
-    "timestamp": "08:12:42",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 51 (Moderate) | PM2.5: 51.5 \u00b5g/m\u00b3 | Temp: 27.0\u00b0C"
-  },
-  {
-    "timestamp": "08:12:42",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 172 (Unhealthy) | PM2.5: 136.0 \u00b5g/m\u00b3 | Temp: 28.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:42",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 55 (Moderate) | PM2.5: 55.6 \u00b5g/m\u00b3 | Temp: 33.6\u00b0C"
-  },
-  {
-    "timestamp": "08:12:42",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 101 (Unhealthy) | PM2.5: 100.7 \u00b5g/m\u00b3 | Temp: 23.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:42",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 97 (Moderate) | PM2.5: 97.2 \u00b5g/m\u00b3 | Temp: 28.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:42",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 158 (Unhealthy) | PM2.5: 129.3 \u00b5g/m\u00b3 | Temp: 32.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:42",
+    "timestamp": "15:37:15",
     "level": "SUCCESS",
-    "message": "Network scan #149 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #10 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "DATA",
-    "message": "KP-002 | AQI: 161 (Unhealthy) | PM2.5: 130.9 \u00b5g/m\u00b3 | Temp: 20.5\u00b0C"
+    "message": "KP-002 | AQI: 37 (Excellent) | PM2.5: 37.3 \u00b5g/m\u00b3 | Temp: 20.6\u00b0C"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "DATA",
-    "message": "KP-003 | AQI: 95 (Moderate) | PM2.5: 95.7 \u00b5g/m\u00b3 | Temp: 28.3\u00b0C"
+    "message": "KP-003 | AQI: 93 (Moderate) | PM2.5: 93.6 \u00b5g/m\u00b3 | Temp: 27.8\u00b0C"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "DATA",
-    "message": "KP-005 | AQI: 29 (Excellent) | PM2.5: 29.1 \u00b5g/m\u00b3 | Temp: 25.2\u00b0C"
+    "message": "KP-005 | AQI: 73 (Moderate) | PM2.5: 73.9 \u00b5g/m\u00b3 | Temp: 32.5\u00b0C"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "DATA",
-    "message": "EG-001 | AQI: 113 (Unhealthy) | PM2.5: 106.7 \u00b5g/m\u00b3 | Temp: 24.6\u00b0C"
+    "message": "EG-001 | AQI: 74 (Moderate) | PM2.5: 74.1 \u00b5g/m\u00b3 | Temp: 25.2\u00b0C"
   },
   {
-    "timestamp": "08:12:45",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 87 (Moderate) | PM2.5: 87.2 \u00b5g/m\u00b3 | Temp: 20.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:45",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 173 (Unhealthy) | PM2.5: 136.7 \u00b5g/m\u00b3 | Temp: 24.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:45",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 100 (Unhealthy) | PM2.5: 100.2 \u00b5g/m\u00b3 | Temp: 20.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:45",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 155 (Unhealthy) | PM2.5: 127.8 \u00b5g/m\u00b3 | Temp: 24.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:45",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 13 (Excellent) | PM2.5: 13.0 \u00b5g/m\u00b3 | Temp: 21.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:45",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 70 (Moderate) | PM2.5: 70.6 \u00b5g/m\u00b3 | Temp: 21.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:45",
+    "timestamp": "15:37:18",
     "level": "SUCCESS",
-    "message": "Network scan #150 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #11 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:48",
+    "timestamp": "15:37:21",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:48",
+    "timestamp": "15:37:21",
     "level": "DATA",
-    "message": "KP-002 | AQI: 190 (Unhealthy) | PM2.5: 145.2 \u00b5g/m\u00b3 | Temp: 33.6\u00b0C"
+    "message": "KP-002 | AQI: 137 (Unhealthy) | PM2.5: 118.7 \u00b5g/m\u00b3 | Temp: 22.9\u00b0C"
   },
   {
-    "timestamp": "08:12:48",
+    "timestamp": "15:37:21",
     "level": "DATA",
-    "message": "KP-003 | AQI: 46 (Excellent) | PM2.5: 46.6 \u00b5g/m\u00b3 | Temp: 32.0\u00b0C"
+    "message": "KP-003 | AQI: 63 (Moderate) | PM2.5: 63.9 \u00b5g/m\u00b3 | Temp: 28.6\u00b0C"
   },
   {
-    "timestamp": "08:12:48",
+    "timestamp": "15:37:21",
     "level": "DATA",
-    "message": "KP-005 | AQI: 84 (Moderate) | PM2.5: 84.6 \u00b5g/m\u00b3 | Temp: 32.7\u00b0C"
+    "message": "KP-005 | AQI: 52 (Moderate) | PM2.5: 52.4 \u00b5g/m\u00b3 | Temp: 33.3\u00b0C"
   },
   {
-    "timestamp": "08:12:48",
+    "timestamp": "15:37:21",
     "level": "DATA",
-    "message": "EG-001 | AQI: 173 (Unhealthy) | PM2.5: 136.6 \u00b5g/m\u00b3 | Temp: 25.1\u00b0C"
+    "message": "EG-001 | AQI: 18 (Excellent) | PM2.5: 18.0 \u00b5g/m\u00b3 | Temp: 31.2\u00b0C"
   },
   {
-    "timestamp": "08:12:48",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 176 (Unhealthy) | PM2.5: 138.4 \u00b5g/m\u00b3 | Temp: 29.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:48",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 148 (Unhealthy) | PM2.5: 124.3 \u00b5g/m\u00b3 | Temp: 32.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:48",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 58 (Moderate) | PM2.5: 58.5 \u00b5g/m\u00b3 | Temp: 32.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:48",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 72 (Moderate) | PM2.5: 72.4 \u00b5g/m\u00b3 | Temp: 25.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:48",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 171 (Unhealthy) | PM2.5: 135.7 \u00b5g/m\u00b3 | Temp: 21.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:48",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 67 (Moderate) | PM2.5: 67.2 \u00b5g/m\u00b3 | Temp: 20.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:48",
+    "timestamp": "15:37:21",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:49",
+    "timestamp": "15:37:21",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:49",
+    "timestamp": "15:37:21",
     "level": "SUCCESS",
-    "message": "Network scan #151 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #12 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "DATA",
-    "message": "KP-002 | AQI: 19 (Excellent) | PM2.5: 19.4 \u00b5g/m\u00b3 | Temp: 27.6\u00b0C"
+    "message": "KP-002 | AQI: 81 (Moderate) | PM2.5: 81.8 \u00b5g/m\u00b3 | Temp: 30.9\u00b0C"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "DATA",
-    "message": "KP-003 | AQI: 171 (Unhealthy) | PM2.5: 135.5 \u00b5g/m\u00b3 | Temp: 35.0\u00b0C"
+    "message": "KP-003 | AQI: 89 (Moderate) | PM2.5: 89.8 \u00b5g/m\u00b3 | Temp: 24.9\u00b0C"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "DATA",
-    "message": "KP-005 | AQI: 128 (Unhealthy) | PM2.5: 114.4 \u00b5g/m\u00b3 | Temp: 26.5\u00b0C"
+    "message": "KP-005 | AQI: 138 (Unhealthy) | PM2.5: 119.1 \u00b5g/m\u00b3 | Temp: 22.7\u00b0C"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "DATA",
-    "message": "EG-001 | AQI: 187 (Unhealthy) | PM2.5: 143.8 \u00b5g/m\u00b3 | Temp: 30.8\u00b0C"
+    "message": "EG-001 | AQI: 36 (Excellent) | PM2.5: 36.0 \u00b5g/m\u00b3 | Temp: 30.2\u00b0C"
   },
   {
-    "timestamp": "08:12:52",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 90 (Moderate) | PM2.5: 90.1 \u00b5g/m\u00b3 | Temp: 34.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:52",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 198 (Unhealthy) | PM2.5: 149.3 \u00b5g/m\u00b3 | Temp: 24.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:52",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 149 (Unhealthy) | PM2.5: 124.9 \u00b5g/m\u00b3 | Temp: 31.0\u00b0C"
-  },
-  {
-    "timestamp": "08:12:52",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 59 (Moderate) | PM2.5: 59.8 \u00b5g/m\u00b3 | Temp: 28.2\u00b0C"
-  },
-  {
-    "timestamp": "08:12:52",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 70 (Moderate) | PM2.5: 70.2 \u00b5g/m\u00b3 | Temp: 32.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:52",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 72 (Moderate) | PM2.5: 72.7 \u00b5g/m\u00b3 | Temp: 21.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:52",
+    "timestamp": "15:37:24",
     "level": "SUCCESS",
-    "message": "Network scan #152 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #13 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "DATA",
-    "message": "KP-002 | AQI: 92 (Moderate) | PM2.5: 92.1 \u00b5g/m\u00b3 | Temp: 33.4\u00b0C"
+    "message": "KP-002 | AQI: 13 (Excellent) | PM2.5: 13.4 \u00b5g/m\u00b3 | Temp: 32.5\u00b0C"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "DATA",
-    "message": "KP-003 | AQI: 45 (Excellent) | PM2.5: 45.6 \u00b5g/m\u00b3 | Temp: 26.7\u00b0C"
+    "message": "KP-003 | AQI: 48 (Excellent) | PM2.5: 48.9 \u00b5g/m\u00b3 | Temp: 24.8\u00b0C"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "DATA",
-    "message": "KP-005 | AQI: 144 (Unhealthy) | PM2.5: 122.4 \u00b5g/m\u00b3 | Temp: 25.4\u00b0C"
+    "message": "KP-005 | AQI: 121 (Unhealthy) | PM2.5: 110.7 \u00b5g/m\u00b3 | Temp: 25.0\u00b0C"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "DATA",
-    "message": "EG-001 | AQI: 167 (Unhealthy) | PM2.5: 133.5 \u00b5g/m\u00b3 | Temp: 24.0\u00b0C"
+    "message": "EG-001 | AQI: 90 (Moderate) | PM2.5: 90.3 \u00b5g/m\u00b3 | Temp: 30.0\u00b0C"
   },
   {
-    "timestamp": "08:12:55",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 98 (Moderate) | PM2.5: 98.8 \u00b5g/m\u00b3 | Temp: 24.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:55",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 57 (Moderate) | PM2.5: 57.0 \u00b5g/m\u00b3 | Temp: 24.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:55",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 116 (Unhealthy) | PM2.5: 108.1 \u00b5g/m\u00b3 | Temp: 25.7\u00b0C"
-  },
-  {
-    "timestamp": "08:12:55",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 35 (Excellent) | PM2.5: 35.3 \u00b5g/m\u00b3 | Temp: 20.5\u00b0C"
-  },
-  {
-    "timestamp": "08:12:55",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 44 (Excellent) | PM2.5: 44.4 \u00b5g/m\u00b3 | Temp: 24.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:55",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 26 (Excellent) | PM2.5: 26.0 \u00b5g/m\u00b3 | Temp: 34.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:55",
+    "timestamp": "15:37:27",
     "level": "SUCCESS",
-    "message": "Network scan #153 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #14 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "INFO",
-    "message": "Monitoring 10 sensors"
+    "message": "Monitoring 4 sensors"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "DATA",
-    "message": "KP-002 | AQI: 51 (Moderate) | PM2.5: 51.1 \u00b5g/m\u00b3 | Temp: 26.9\u00b0C"
+    "message": "KP-002 | AQI: 110 (Unhealthy) | PM2.5: 105.0 \u00b5g/m\u00b3 | Temp: 23.3\u00b0C"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "DATA",
-    "message": "KP-003 | AQI: 100 (Unhealthy) | PM2.5: 100.4 \u00b5g/m\u00b3 | Temp: 32.9\u00b0C"
+    "message": "KP-003 | AQI: 17 (Excellent) | PM2.5: 17.8 \u00b5g/m\u00b3 | Temp: 23.7\u00b0C"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "DATA",
-    "message": "KP-005 | AQI: 57 (Moderate) | PM2.5: 57.6 \u00b5g/m\u00b3 | Temp: 31.5\u00b0C"
+    "message": "KP-005 | AQI: 44 (Excellent) | PM2.5: 44.3 \u00b5g/m\u00b3 | Temp: 29.4\u00b0C"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "DATA",
-    "message": "EG-001 | AQI: 47 (Excellent) | PM2.5: 47.3 \u00b5g/m\u00b3 | Temp: 32.5\u00b0C"
+    "message": "EG-001 | AQI: 176 (Unhealthy) | PM2.5: 138.2 \u00b5g/m\u00b3 | Temp: 24.1\u00b0C"
   },
   {
-    "timestamp": "08:12:58",
-    "level": "DATA",
-    "message": "KP-004 | AQI: 20 (Excellent) | PM2.5: 20.2 \u00b5g/m\u00b3 | Temp: 34.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:58",
-    "level": "DATA",
-    "message": "EG-004 | AQI: 138 (Unhealthy) | PM2.5: 119.2 \u00b5g/m\u00b3 | Temp: 27.2\u00b0C"
-  },
-  {
-    "timestamp": "08:12:58",
-    "level": "DATA",
-    "message": "EG-005 | AQI: 112 (Unhealthy) | PM2.5: 106.4 \u00b5g/m\u00b3 | Temp: 24.4\u00b0C"
-  },
-  {
-    "timestamp": "08:12:58",
-    "level": "DATA",
-    "message": "KP-001 | AQI: 61 (Moderate) | PM2.5: 61.4 \u00b5g/m\u00b3 | Temp: 21.3\u00b0C"
-  },
-  {
-    "timestamp": "08:12:58",
-    "level": "DATA",
-    "message": "EG-002 | AQI: 76 (Moderate) | PM2.5: 76.6 \u00b5g/m\u00b3 | Temp: 28.9\u00b0C"
-  },
-  {
-    "timestamp": "08:12:58",
-    "level": "DATA",
-    "message": "EG-003 | AQI: 62 (Moderate) | PM2.5: 62.4 \u00b5g/m\u00b3 | Temp: 26.8\u00b0C"
-  },
-  {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "INFO",
-    "message": "Trimmed history from 1010 to 1000 readings"
+    "message": "Trimmed history from 1004 to 1000 readings"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "DEBUG",
     "message": "Saved 1000 total readings to file"
   },
   {
-    "timestamp": "08:12:58",
+    "timestamp": "15:37:30",
     "level": "SUCCESS",
-    "message": "Network scan #154 complete - 10 sensors online (Total history: 1000)"
+    "message": "Network scan #15 complete - 4 sensors online (Total history: 1000)"
   },
   {
-    "timestamp": "08:13:01",
+    "timestamp": "15:37:33",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 105 (Unhealthy) | PM2.5: 102.7 \u00b5g/m\u00b3 | Temp: 21.2\u00b0C"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 52 (Moderate) | PM2.5: 52.9 \u00b5g/m\u00b3 | Temp: 27.7\u00b0C"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 185 (Unhealthy) | PM2.5: 142.7 \u00b5g/m\u00b3 | Temp: 34.3\u00b0C"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 60 (Moderate) | PM2.5: 60.2 \u00b5g/m\u00b3 | Temp: 28.2\u00b0C"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:33",
+    "level": "SUCCESS",
+    "message": "Network scan #16 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 153 (Unhealthy) | PM2.5: 126.9 \u00b5g/m\u00b3 | Temp: 26.9\u00b0C"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 184 (Unhealthy) | PM2.5: 142.4 \u00b5g/m\u00b3 | Temp: 30.9\u00b0C"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 13 (Excellent) | PM2.5: 13.3 \u00b5g/m\u00b3 | Temp: 20.1\u00b0C"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 79 (Moderate) | PM2.5: 79.5 \u00b5g/m\u00b3 | Temp: 26.7\u00b0C"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:36",
+    "level": "SUCCESS",
+    "message": "Network scan #17 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 90 (Moderate) | PM2.5: 90.1 \u00b5g/m\u00b3 | Temp: 23.4\u00b0C"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 66 (Moderate) | PM2.5: 66.6 \u00b5g/m\u00b3 | Temp: 20.2\u00b0C"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 14 (Excellent) | PM2.5: 14.3 \u00b5g/m\u00b3 | Temp: 32.4\u00b0C"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 38 (Excellent) | PM2.5: 38.6 \u00b5g/m\u00b3 | Temp: 27.9\u00b0C"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:39",
+    "level": "SUCCESS",
+    "message": "Network scan #18 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:42",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:42",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 56 (Moderate) | PM2.5: 56.5 \u00b5g/m\u00b3 | Temp: 25.7\u00b0C"
+  },
+  {
+    "timestamp": "15:37:42",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 15 (Excellent) | PM2.5: 15.6 \u00b5g/m\u00b3 | Temp: 33.8\u00b0C"
+  },
+  {
+    "timestamp": "15:37:42",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 37 (Excellent) | PM2.5: 37.3 \u00b5g/m\u00b3 | Temp: 24.1\u00b0C"
+  },
+  {
+    "timestamp": "15:37:42",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 55 (Moderate) | PM2.5: 55.2 \u00b5g/m\u00b3 | Temp: 26.5\u00b0C"
+  },
+  {
+    "timestamp": "15:37:42",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:43",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:43",
+    "level": "SUCCESS",
+    "message": "Network scan #19 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 16 (Excellent) | PM2.5: 16.0 \u00b5g/m\u00b3 | Temp: 20.9\u00b0C"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 88 (Moderate) | PM2.5: 88.5 \u00b5g/m\u00b3 | Temp: 21.8\u00b0C"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 86 (Moderate) | PM2.5: 86.9 \u00b5g/m\u00b3 | Temp: 30.4\u00b0C"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 174 (Unhealthy) | PM2.5: 137.4 \u00b5g/m\u00b3 | Temp: 20.9\u00b0C"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:46",
+    "level": "SUCCESS",
+    "message": "Network scan #20 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 167 (Unhealthy) | PM2.5: 133.7 \u00b5g/m\u00b3 | Temp: 21.3\u00b0C"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 63 (Moderate) | PM2.5: 63.6 \u00b5g/m\u00b3 | Temp: 30.1\u00b0C"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 157 (Unhealthy) | PM2.5: 128.8 \u00b5g/m\u00b3 | Temp: 25.2\u00b0C"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 141 (Unhealthy) | PM2.5: 120.7 \u00b5g/m\u00b3 | Temp: 20.6\u00b0C"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:49",
+    "level": "SUCCESS",
+    "message": "Network scan #21 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "INFO",
+    "message": "Monitoring 4 sensors"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "DATA",
+    "message": "KP-002 | AQI: 87 (Moderate) | PM2.5: 87.4 \u00b5g/m\u00b3 | Temp: 29.2\u00b0C"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "DATA",
+    "message": "KP-003 | AQI: 63 (Moderate) | PM2.5: 63.1 \u00b5g/m\u00b3 | Temp: 25.2\u00b0C"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "DATA",
+    "message": "KP-005 | AQI: 140 (Unhealthy) | PM2.5: 120.3 \u00b5g/m\u00b3 | Temp: 29.6\u00b0C"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "DATA",
+    "message": "EG-001 | AQI: 74 (Moderate) | PM2.5: 74.7 \u00b5g/m\u00b3 | Temp: 23.5\u00b0C"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "INFO",
+    "message": "Trimmed history from 1004 to 1000 readings"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "DEBUG",
+    "message": "Saved 1000 total readings to file"
+  },
+  {
+    "timestamp": "15:37:52",
+    "level": "SUCCESS",
+    "message": "Network scan #22 complete - 4 sensors online (Total history: 1000)"
+  },
+  {
+    "timestamp": "15:37:55",
     "level": "SYSTEM",
     "message": "Simulation stopped - Final history count: 1000"
+  },
+  {
+    "timestamp": "15:37:57",
+    "level": "SYSTEM",
+    "message": "Database sync stopped (Total synced: 40)"
   }
 ]

@@ -157,8 +157,43 @@ function pushMarker(index) {
         AQI: ${aqi}
     `);
 
+    // ✅ ADD CLICK HANDLER TO MARKER
+    marker.on('click', async function() {
+        console.log('🗺️ Marker clicked:', sensor.id);
+        
+        // Call the selectSensor function from app.js
+        if (typeof window.selectSensor === 'function') {
+            await window.selectSensor(sensor.id, index);
+        }
+        
+        // Highlight marker
+        highlightMarker(index);
+    });
+
     markerGroup.addLayer(marker);
     window.markerStack[index] = marker;
+}
+
+function highlightMarker(index) {
+    // Remove highlight from all markers
+    Object.keys(window.markerStack).forEach(idx => {
+        const marker = window.markerStack[idx];
+        if (marker) {
+            marker.setStyle({
+                weight: 1,
+                radius: 9
+            });
+        }
+    });
+    
+    // Highlight selected marker
+    const selectedMarker = window.markerStack[index];
+    if (selectedMarker) {
+        selectedMarker.setStyle({
+            weight: 3,
+            radius: 12
+        });
+    }
 }
 
 window.addEventListener('sensorCountChanged', (e) => {
@@ -223,6 +258,30 @@ function updateMarkerColors() {
         `);
     });
 }
+
+// ============================================================================
+// EXPOSE selectSensor FOR EXTERNAL USE
+// ============================================================================
+
+// Make selectSensor available globally for marker clicks
+window.selectSensor = async function(sensorId, sensorIndex) {
+    console.log('📍 Map: Selecting sensor', sensorId);
+    
+    // Update selected sensor in app.js
+    window.selectedSensorId = sensorId;
+    
+    // Highlight marker
+    highlightMarker(sensorIndex);
+    
+    // Trigger sensor selection in app.js if the function exists
+    if (window.updateSidebarForSensor) {
+        await window.updateSidebarForSensor(sensorId);
+    }
+    
+    if (window.updateAnalyticsForSensor) {
+        await window.updateAnalyticsForSensor(sensorId);
+    }
+};
 
 // ============================================================================
 // INIT

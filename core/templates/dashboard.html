@@ -40,16 +40,17 @@
                         <i class="fa-solid fa-sun"></i>
                     </button>
 
-                    <!-- Notifications -->
+                    <!-- Notifications - UPDATED -->
                     <div class="notification-wrapper">
                         <button id="notificationBtn" class="icon-btn" title="Notifications">
                             <i class="fa-solid fa-bell"></i>
-                            <span id="notifBadge" class="badge-dot hidden"></span>
                         </button>
+                        <span id="notifBadge" class="badge-dot hidden"></span>
+                        
                         <div id="notificationDropdown" class="notification-dropdown hidden">
                             <div class="notif-header">
                                 <span>Notifications</span>
-                                <button id="clearNotifs" class="clear-btn">Clear</button>
+                                <button id="clearNotifs" class="clear-btn">Clear All</button>
                             </div>
                             <div id="notifList" class="notif-list">
                                 <div class="empty-state">No new alerts</div>
@@ -60,6 +61,11 @@
                     <!-- AQI Widget -->
                     <button id="widgetToggle" class="icon-btn" title="Toggle widget">
                         <i class="fa-solid fa-square-poll-vertical"></i>
+                    </button>
+                    
+                    <!-- Test Notification Button (Remove after testing) -->
+                    <button class="icon-btn" title="Test Notification" onclick="testNotificationPopup()" style="display: none;">
+                        <i class="fa-solid fa-flask"></i>
                     </button>
                 </div>
             </div>
@@ -118,20 +124,16 @@
                         <button class="map-btn">-</button>
                     </div>
 
-                    <div class="map-overlay">
-                        <h4 class="street-label">STREET VIEW: MADISON AVE</h4>
-                        <div class="pollutant-summary">
-                            <div class="pollutant-item">
-                                <span class="pollutant-name">PM2.5</span>
-                                <div class="pollutant-value success">38 <span>µg/m³</span></div>
+                    <!-- Dynamic Street View Widget (replaces hardcoded overlay) -->
+                    <div class="street-view-card">
+                        <!-- This will be populated dynamically by JavaScript -->
+                        <div class="street-view-compact">
+                            <div class="street-icon">
+                                <i class="fas fa-map-marker-alt"></i>
                             </div>
-                            <div class="pollutant-item">
-                                <span class="pollutant-name">NO₂</span>
-                                <div class="pollutant-value warning">21 <span>ppb</span></div>
-                            </div>
-                            <div class="pollutant-item">
-                                <span class="pollutant-name">CO</span>
-                                <div class="pollutant-value info">0.8 <span>ppm</span></div>
+                            <div class="street-details">
+                                <h4>Select a Sensor</h4>
+                                <p>Click on a map marker</p>
                             </div>
                         </div>
                     </div>
@@ -195,93 +197,7 @@
                 </div>
 
                 <!-- Sensor Grid -->
-                <div class="sensor-grid">
-                    <!-- Sensor Card Template (JS will populate) -->
-                    <div class="sensor-card-wrapper">
-                        <div class="sensor-card-inner">
-                            <!-- FRONT -->
-                            <div class="sensor-card front">
-                                <div class="sensor-header">
-                                    <div class="sensor-info">
-                                        <div class="sensor-icon">
-                                            <i class="fa-solid fa-wifi"></i>
-                                        </div>
-                                        <div>
-                                            <h4 class="sensor-id">
-                                                SENSOR-001
-                                                <span class="status-dot online"></span>
-                                            </h4>
-                                            <span class="sensor-location">Taylor's Road, Kilpauk</span>
-                                        </div>
-                                    </div>
-                                    <i class="fa-solid fa-ellipsis-vertical"></i>
-                                </div>
-
-                                <div class="sensor-stats">
-                                    <div class="sensor-stat">
-                                        <span class="pollutant-name">PM2.5</span>
-                                        <div class="pollutant-value success"
-                                            style="font-size: 1.25rem; font-weight: 700; display: inline-flex; align-items: baseline; gap: 0.25rem; line-height: 1.2;">
-                                            38 <span style="font-size: 0.85rem;">µg/m³</span>
-                                        </div>
-                                    </div>
-                                    <div class="sensor-stat">
-                                        <span class="pollutant-name"">NO₂</span>
-                                        <div class=" pollutant-value warning"
-                                            style="font-size: 1.25rem; font-weight: 700; display: inline-flex; align-items: baseline; gap: 0.25rem; line-height: 1.2;">
-                                            21<span span style="font-size: 0.85rem;">ppb</span></span>
-                                    </div>
-                                </div>
-                                <div class="sensor-stat">
-                                    <span class="pollutant-name">CO</span>
-                                    <div class="pollutant-value info"
-                                        style="font-size: 1.25rem; font-weight: 700; display: inline-flex; align-items: baseline; gap: 0.25rem; line-height: 1.2;">
-                                        0.8<span span style="font-size: 0.85rem;">ppm</span></span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="sensor-footer">
-                                <div class="sensor-status">
-                                    <span>Status:</span>
-                                    <span class="status-text">Online</span>
-                                    <button class="flip-btn">DETAILS</button>
-                                </div>
-                                <!-- Optional other buttons -->
-                            </div>
-
-                        </div>
-
-                        <!-- BACK -->
-                        <div class="sensor-card back">
-                            <div class="sensor-header">
-                                <div class="sensor-info">
-                                    <div class="sensor-icon">
-                                        <i class="fa-solid fa-wifi"></i>
-                                    </div>
-                                    <div>
-                                        <h4 class="sensor-id">
-                                            SEN-001
-                                            <span class="status-dot online"></span>
-                                        </h4>
-                                        <span class="sensor-location">Detailed View</span>
-                                    </div>
-                                </div>
-                                <i class="fa-solid fa-ellipsis-vertical"></i>
-                            </div>
-
-                            <div class="sensor-details">
-                                <p>Additional sensor information and diagnostics would appear here.</p>
-                            </div>
-
-                            <div class="sensor-footer">
-                                <!-- <button class="btn-text">CALIBRATE</button> -->
-                                <button class="flip-btn">BACK</button>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
+                <div class="sensor-grid"></div>
                 </div>
             </section>
 
@@ -359,25 +275,14 @@
 
                     <!-- Right Widgets Column -->
                     <div class="widgets-column">
-                        <!-- Calendar Widget -->
+                        <!-- Calendar Widget - UPDATED TO USE JAVASCRIPT -->
                         <div class="card widget-card">
-                            <div class="widget-header">
-                                <button class="icon-btn"><i class="fa-solid fa-chevron-left"></i></button>
-                                <h4>November 2023</h4>
-                                <button class="icon-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                            <div class="widget-header-simple">
+                                <i class="fa-solid fa-calendar-alt"></i>
+                                <h4>February 2026</h4>
                             </div>
-                            <div class="calendar-grid">
-                                <span class="day-label">S</span><span class="day-label">M</span>
-                                <span class="day-label">T</span><span class="day-label">W</span>
-                                <span class="day-label">T</span><span class="day-label">F</span>
-                                <span class="day-label">S</span>
-                                <span class="day inactive">29</span><span class="day inactive">30</span>
-                                <span class="day inactive">31</span><span class="day">1</span>
-                                <span class="day">2</span><span class="day">3</span><span class="day">4</span>
-                                <span class="day active">5</span><span class="day active-current">6</span>
-                                <span class="day active">7</span><span class="day">8</span>
-                                <span class="day">9</span><span class="day">10</span><span class="day">11</span>
-                            </div>
+                            <!-- Calendar grid will be populated by JavaScript -->
+                            <div class="calendar-grid"></div>
                         </div>
 
                         <!-- Peak Pollution Hours -->
@@ -392,21 +297,21 @@
                                     <div class="bar-container">
                                         <div class="bar-fill warning" style="width: 85%;"></div>
                                     </div>
-                                    <span class="value-label warning">85%</span>
+                                    <span class="value-label warning">85 AQI</span>
                                 </div>
                                 <div class="peak-row">
                                     <span class="time-label">12:00</span>
                                     <div class="bar-container">
                                         <div class="bar-fill success" style="width: 35%;"></div>
                                     </div>
-                                    <span class="value-label success">35%</span>
+                                    <span class="value-label success">35 AQI</span>
                                 </div>
                                 <div class="peak-row">
                                     <span class="time-label">17:00</span>
                                     <div class="bar-container">
                                         <div class="bar-fill danger" style="width: 95%;"></div>
                                     </div>
-                                    <span class="value-label danger">95%</span>
+                                    <span class="value-label danger">95 AQI</span>
                                 </div>
                                 <p class="peak-note">Pollution peaks during morning rush.</p>
                             </div>
@@ -424,7 +329,7 @@
                                     <div class="bar" style="height: 50px;"></div>
                                     <span>OCT</span>
                                 </div>
-                                <div class="month-bar active">
+                                <div class="month-bar">
                                     <div class="bar" style="height: 70px;"></div>
                                     <span>NOV</span>
                                 </div>
@@ -432,8 +337,8 @@
                                     <div class="bar" style="height: 30px;"></div>
                                     <span>DEC</span>
                                 </div>
-                                <div class="month-bar">
-                                    <div class="bar" style="height: 30px;"></div>
+                                <div class="month-bar active">
+                                    <div class="bar" style="height: 45px;"></div>
                                     <span>JAN</span>
                                 </div>
                             </div>
@@ -451,27 +356,18 @@
                     <div class="empty-state" id="blogLoading">Loading posts...</div>
                 </div>
             </section>
+            
         </section>
+
     </main>
 
     <!-- Scripts -->
-
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <script src="{% static 'js/map.js' %}"></script>
     <script src="{% static 'js/app.js' %}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="{% static 'js/aqi_widget_terminal.js' %}"></script>
-
-
-
-    <script>
-        // Flip card functionality
-        document.querySelectorAll('.flip-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                btn.closest('.sensor-card-wrapper').classList.toggle('flipped');
-            });
-        });
-    </script>
 
 </body>
 
