@@ -1,0 +1,1076 @@
+================================================================================
+                    AQI PROJECT - RELEVANT CODE SNIPPETS
+================================================================================
+
+PROJECT OVERVIEW:
+- Air Quality Index (AQI) Monitoring System
+- Django Backend + REST API + Leaflet.js Maps + Sensor Data Simulation
+- Real-time sensor data visualization with blog system
+- Tech Stack: Django, Django REST Framework, JavaScript, Leaflet.js
+
+
+================================================================================
+1. CORE MODELS (core/models.py)
+================================================================================
+
+class Sensor(models.Model):
+    sensor_id = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=150, blank=True)
+    area = models.CharField(max_length=100, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return self.name or self.sensor_id
+
+
+class Reading(models.Model):
+    """Sensor readings with environmental data"""
+    slave_id = models.IntegerField(null=True, blank=True)
+    sensor = models.ForeignKey(Sensor, on_delete=models.SET_NULL, 
+                               related_name="readings", null=True, blank=True)
+    timestamp = models.DateTimeField(default=timezone.now)
+    temperature = models.FloatField(null=True, blank=True)
+    humidity = models.FloatField(null=True, blank=True)
+    air_quality = models.FloatField(null=True, blank=True)
+    aqi_category = models.CharField(max_length=50, blank=True)
+    aqi_color = models.CharField(max_length=20, blank=True)
+    co_level = models.FloatField(null=True, blank=True)
+    no_level = models.FloatField(null=True, blank=True)
+    smoke = models.FloatField(null=True, blank=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+
+    class Meta:
+        ordering = ["-timestamp"]
+
+    def __str__(self):
+        return f"slave:{self.slave_id or 'unk'} @ {self.timestamp:%Y-%m-%d %H:%M}"
+
+
+class BlogPost(models.Model):
+    STATUS_CHOICES = (
+        ("draft", "Draft"),
+        ("published", "Published"),
+    )
+    
+    title = models.CharField(max_length=200)
+    slug = models.SlugField(max_length=220, unique=True)
+    author = models.ForeignKey("auth.User", on_delete=models.SET_NULL, 
+                               null=True, blank=True, related_name="posts")
+    content = models.TextField()
+    excerpt = models.TextField(blank=True)
+    image = models.ImageField(upload_to="img/", null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="draft")
+    published_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-published_at"]
+
+    def save(self, *args, **kwargs):
+        if self.status == "published" and not self.published_at:
+            self.published_at = timezone.now()
+        super().save(*args, **kwargs)
+
+
+================================================================================
+2. API SERIALIZERS (api/serializers.py)
+================================================================================
+
+class SensorNestedSerializer(serializers.ModelSerializer):
+    """Lightweight sensor serializer for nested representation."""
+    class Meta:
+        model = Sensor
+        fields = ('id', 'sensor_id', 'name', 'latitude', 'longitude')
+
+
+class ReadingSerializer(serializers.ModelSerializer):
+    aqi = serializers.SerializerMethodField(read_only=True)
+    sensor_detail = SensorNestedSerializer(source='sensor', read_only=True)
+
+    class Meta:
+        model = Reading
+        fields = '__all__'
+        read_only_fields = ('aqi', 'sensor_detail', 'timestamp')
+
+    def get_aqi(self, obj):
+        return obj.air_quality
+
+    def validate(self, data):
+        # Validate temperature range (-50 to 60 Celsius)
+        if 'temperature' in data:
+            if not -50 <= data['temperature'] <= 60:
+                raise serializers.ValidationError({
+                    'temperature': 'Temperature must be between -50 and 60 degrees'
+                })
+        # Validate humidity range (0 to 100%)
+        if 'humidity' in data:
+            if not 0 <= data['humidity'] <= 100:
+                raise serializers.ValidationError({
+                    'humidity': 'Humidity must be between 0 and 100%'
+                })
+        return data
+
+
+class SensorSerializer(serializers.ModelSerializer):
+    """Sensor model with latest reading."""
+    latest = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Sensor
+        fields = ('id', 'sensor_id', 'name', 'area', 'latitude', 
+                  'longitude', 'is_active', 'latest')
+
+    def get_latest(self, obj):
+        reading = obj.readings.first()
+        return ReadingSerializer(reading).data if reading else None
+
+
+================================================================================
+3. API ENDPOINTS (api/urls.py & api/views.py)
+================================================================================
+
+API Routes:
+  GET  /api/sensors/                    - List all sensors with latest readings
+  GET  /api/sensors/<id>/readings/      - Get readings for specific sensor
+  GET  /api/sensor-data/                - Get all sensor data (simulated)
+  GET  /api/blog/                       - List all blog posts
+  GET  /api/blog/<id>/                  - Get specific blog post
+  POST /api/start-simulation/           - Start sensor data simulation
+  POST /api/stop-simulation/            - Stop sensor data simulation
+  GET  /api/simulation-state/           - Get current simulation state
+
+
+@api_view(['GET'])
+def sensor_list(request):
+    """Retrieve all sensors with their latest readings."""
+    sensors = Sensor.objects.all()
+    serializer = SensorSerializer(sensors, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def sensor_readings(request, sensor_id):
+    """Get readings for a specific sensor with filtering options."""
+    sensor = get_object_or_404(Sensor, pk=sensor_id)
+    readings = sensor.readings.all()
+    
+    # Optional: Filter by hours
+    hours = request.query_params.get('hours', None)
+    if hours:
+        from datetime import timedelta
+        past_time = timezone.now() - timedelta(hours=int(hours))
+        readings = readings.filter(timestamp__gte=past_time)
+    
+    serializer = ReadingSerializer(readings, many=True)
+    return Response({
+        'sensor_name': sensor.name,
+        'readings': serializer.data,
+        'stats': calculate_stats(readings)
+    })
+
+
+def calculate_stats(readings):
+    """Calculate average, min, max for readings."""
+    if not readings.exists():
+        return None
+    
+    aqi_values = list(readings.values_list('air_quality', flat=True))
+    return {
+        'avg': sum(aqi_values) / len(aqi_values),
+        'min': min(aqi_values),
+        'max': max(aqi_values)
+    }
+
+
+================================================================================
+4. MAP & SENSOR VISUALIZATION (static/js/map.js)
+================================================================================
+
+// Global State
+let map;
+let markerStack = {};
+let streetPolylines = {};
+let sensorRadiusCircles = {};
+
+// Sensor Configuration
+window.sensors = {
+    1: { id: 'KP-002', name: 'Ormes Road', lat: 13.0818, lng: 80.2460 },
+    2: { id: 'KP-003', name: 'Flowers Road', lat: 13.0782, lng: 80.2468 },
+    3: { id: 'KP-005', name: 'Halls Road', lat: 13.0746, lng: 80.2513 },
+    4: { id: 'EG-001', name: 'Casa Major Road', lat: 13.0718, lng: 80.2548 },
+    5: { id: 'KP-004', name: 'Pantheon Road', lat: 13.0728, lng: 80.2574 },
+    6: { id: 'EG-004', name: 'Ethiraj Salai', lat: 13.0731, lng: 80.2622 },
+    7: { id: 'EG-005', name: 'College Road', lat: 13.0766, lng: 80.2625 },
+    8: { id: 'KP-001', name: 'Kilpauk Garden Road', lat: 13.0845, lng: 80.2390 },
+    9: { id: 'EG-002', name: 'Kellys Road', lat: 13.0882, lng: 80.2470 },
+    10: { id: 'EG-003', name: 'Commander-in-Chief Road', lat: 13.0910, lng: 80.2498 }
+};
+
+// Initialize Map
+function initMap() {
+    map = L.map('map', {
+        zoomControl: false,
+        maxBounds: restrictedBounds,
+        maxBoundsViscosity: 1,
+        minZoom: 14,
+        maxZoom: 18
+    }).setView([13.082, 80.250], 14);
+
+    drawBoundary();
+    loadTiles();
+    initControls();
+    
+    setTimeout(() => {
+        initializeStreetPolylines();
+    }, 300);
+}
+
+// Color Functions
+function getAQIColor(aqi) {
+    if (aqi <= 50) return '#00E396';      // Green - Good
+    if (aqi <= 100) return '#FEB019';     // Yellow - Moderate
+    if (aqi <= 150) return '#f05233';     // Orange - Unhealthy
+    return '#ce1c1c';                     // Red - Hazardous
+}
+
+function getHumidityColor(humidity) {
+    if (humidity <= 30) return '#1E3A8A';  // Blue - Dry
+    if (humidity <= 50) return '#0891B2';  // Cyan - Low-moderate
+    if (humidity <= 65) return '#00E396';  // Green - Moderate
+    if (humidity <= 80) return '#FEB019';  // Yellow - High
+    return '#f05233';                      // Red - Very high
+}
+
+// Create Sensor Markers with 300m Radius
+function pushMarker(index) {
+    const sensor = window.sensors[index];
+    const sensorData = window.sensorState?.[sensor.id];
+    const aqi = sensorData?.aqi ?? (25 + (index * 15));
+    const humidity = sensorData?.humidity ?? 50;
+    const color = getAQIColor(aqi);
+
+    // Add 300m radius circle
+    const radiusCircle = L.circle([sensor.lat, sensor.lng], {
+        radius: 300,
+        fillColor: color,
+        fillOpacity: 0.15,
+        color: color,
+        weight: 2,
+        dashArray: '5,5'
+    }).addTo(map);
+    sensorRadiusCircles[index] = radiusCircle;
+
+    // Add marker
+    const marker = L.circleMarker([sensor.lat, sensor.lng], {
+        radius: 9,
+        fillColor: color,
+        fillOpacity: 0.9,
+        color: '#111',
+        weight: 1
+    }).bindPopup(`
+        <b>${sensor.id}</b><br>
+        ${sensor.name}<br>
+        AQI: ${aqi}<br>
+        Humidity: ${Math.round(humidity)}%
+    `);
+
+    marker.on('click', async function() {
+        if (typeof window.selectSensor === 'function') {
+            await window.selectSensor(sensor.id, index);
+        }
+        highlightMarker(index);
+    });
+
+    markerGroup.addLayer(marker);
+    markerStack[index] = marker;
+}
+
+// Street Highlighting by Humidity
+function getStreetHumidities() {
+    const streetData = {};
+    for (let idx in window.sensors) {
+        const sensor = window.sensors[idx];
+        if (!streetData[sensor.name]) {
+            streetData[sensor.name] = {
+                coords: [],
+                humidities: [],
+                name: sensor.name
+            };
+        }
+        streetData[sensor.name].coords.push([sensor.lat, sensor.lng]);
+        
+        const sensorState = window.sensorState?.[sensor.id] || window.sensorState?.[sensor.name];
+        const humidity = sensorState?.humidity || 50;
+        streetData[sensor.name].humidities.push(humidity);
+    }
+    
+    for (let street in streetData) {
+        const data = streetData[street];
+        const avgHumidity = data.humidities.length > 0 
+            ? data.humidities.reduce((a, b) => a + b, 0) / data.humidities.length 
+            : 50;
+        data.avgHumidity = avgHumidity;
+    }
+    return streetData;
+}
+
+function initializeStreetPolylines() {
+    const streetData = getStreetHumidities();
+    for (let street in streetData) {
+        const data = streetData[street];
+        if (data.coords.length < 2) continue;
+        
+        const color = getHumidityColor(data.avgHumidity);
+        const polyline = L.polyline(data.coords, {
+            color: color,
+            weight: 6,
+            opacity: 0.7,
+            lineCap: 'round',
+            lineJoin: 'round'
+        }).addTo(map).bindTooltip(`${street}<br>Humidity: ${Math.round(data.avgHumidity)}%`);
+        
+        streetPolylines[street] = { polyline, humidity: data.avgHumidity, color };
+    }
+}
+
+
+================================================================================
+5. SENSOR DATA FETCHING & STATE MANAGEMENT (static/js/app.js)
+================================================================================
+
+// Global State
+window.sensorState = {};
+window.activeSensorCount = 1;
+window.selectedSensorId = null;
+window.selectedSensorData = null;
+
+// Select Sensor
+async function selectSensor(sensorId, sensorIndex) {
+    window.selectedSensorId = sensorId;
+    console.log('📍 Selected sensor:', sensorId);
+    
+    // Highlight selected card
+    document.querySelectorAll('.sensor-card-wrapper').forEach(wrapper => {
+        if (wrapper.dataset.sensorId === sensorId) {
+            wrapper.classList.add('selected');
+        } else {
+            wrapper.classList.remove('selected');
+        }
+    });
+    
+    updateMapStreetView();
+    await loadSensorData(sensorId);
+    updateAllWidgets();
+}
+
+// Load Sensor Data
+async function loadSensorData(sensorId) {
+    try {
+        const response = await fetch(`/api/sensors/${sensorId}/readings/?hours=24&limit=100`);
+        const data = await response.json();
+        
+        if (data.readings && data.readings.length > 0) {
+            window.selectedSensorData = {
+                sensorId: sensorId,
+                sensorName: data.sensor_name,
+                readings: data.readings,
+                stats: data.stats
+            };
+            console.log('✅ Loaded sensor data:', sensorId, window.selectedSensorData);
+        }
+    } catch (error) {
+        console.error('Error loading sensor data:', error);
+        window.selectedSensorData = null;
+    }
+}
+
+// Fetch Real-time Sensor Data
+async function fetchSimulatedSensorData() {
+    try {
+        const res = await fetch('/api/sensor-data/');
+        const json = await res.json();
+
+        if (!json.data) return;
+
+        window.sensorState = {};
+        const count = window.activeSensorCount;
+
+        json.data.slice(0, count).forEach((s, index) => {
+            const mapSensor = window.sensors[index + 1];
+            if (!mapSensor) return;
+
+            window.sensorState[mapSensor.id] = {
+                id: mapSensor.id,
+                name: mapSensor.name,
+                lat: s.latitude,
+                lng: s.longitude,
+                aqi: s.aqi,
+                no2: s.no2,
+                co: s.co,
+                smoke: s.smoke,
+                humidity: s.humidity || 50
+            };
+        });
+
+        updateSensorCardsFromDB();
+        
+        if (typeof window.updateStreetPolylineColors === 'function') {
+            window.updateStreetPolylineColors();
+        }
+        
+        if (window.selectedSensorId) {
+            updateMapStreetView();
+        } else {
+            updateHeatmapFromLiveData();
+        }
+
+    } catch (error) {
+        console.error('Error fetching sensor data:', error);
+    }
+}
+
+// Update Street View Card
+function updateMapStreetView() {
+    const streetViewCard = document.querySelector('.street-view-card');
+    if (!streetViewCard) return;
+    
+    if (!window.selectedSensorId) {
+        streetViewCard.innerHTML = `
+            <div class="street-view-compact">
+                <div class="street-icon">
+                    <i class="fas fa-map-marker-alt"></i>
+                </div>
+                <div class="street-details">
+                    <h4>Select a Sensor</h4>
+                    <p>Click on a map marker</p>
+                </div>
+            </div>
+        `;
+        updateHeatmapFromLiveData();
+        return;
+    }
+    
+    let sensorInfo = null;
+    for (let key in window.sensors) {
+        if (window.sensors[key].id === window.selectedSensorId) {
+            sensorInfo = window.sensors[key];
+            break;
+        }
+    }
+    
+    const liveData = window.sensorState[window.selectedSensorId];
+    const aqi = liveData?.aqi ?? 0;
+    const color = getAQIColor(aqi);
+    const category = getAQICategory(aqi);
+    
+    streetViewCard.innerHTML = `
+        <div class="street-view-compact">
+            <div class="street-icon" style="background: ${color}20; color: ${color}">
+                <i class="fas fa-broadcast-tower"></i>
+            </div>
+            <div class="street-details">
+                <h4>${sensorInfo.name}</h4>
+                <div class="aqi-compact">
+                    <span class="aqi-value" style="color: ${color}">${Math.round(aqi)}</span>
+                    <span class="aqi-label">AQI - ${category.text}</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    updateHeatmapFromLiveData();
+}
+
+
+================================================================================
+6. CSS COLOR PALETTE & VARIABLES (static/css/styles.css)
+================================================================================
+
+:root {
+    /* Color Palette */
+    --cream: #F5F5F0;
+    --sand: #E6D8C3;
+    --tan: #C2A68C;
+    --sage: #5D866C;
+
+    /* Semantic Colors - Dark Mode */
+    --bg-primary: #000000;
+    --bg-secondary: #252522;
+    --bg-card: #2A2A26;
+    --text-primary: var(--cream);
+    --text-secondary: var(--sand);
+    --text-muted: var(--tan);
+
+    /* Status Colors */
+    --success: var(--sage);
+    --warning: #D4A574;
+    --danger: #B85C5C;
+    --info: #6B9EB8;
+
+    /* UI Elements */
+    --border-color: rgba(230, 216, 195, 0.15);
+    --shadow: rgba(0, 0, 0, 0.3);
+
+    /* Typography */
+    --font-display: 'Lexend', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* Light Mode */
+:root.light-mode {
+    --bg-primary: var(--cream);
+    --bg-secondary: var(--sand);
+    --bg-card: #FFFFFF;
+    --text-primary: #1A1A18;
+    --text-secondary: #3A3A35;
+    --text-muted: #6A6A62;
+    --border-color: rgba(93, 134, 108, 0.15);
+    --shadow: rgba(93, 134, 108, 0.1);
+}
+
+
+================================================================================
+7. SENSOR CARD FLIP ANIMATION (static/css/styles.css)
+================================================================================
+
+.sensor-card-wrapper {
+    perspective: 1200px;
+    width: 100%;
+    height: 420px;
+    position: relative;
+    cursor: pointer;
+}
+
+.sensor-card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.7s cubic-bezier(0.4, 0.0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.sensor-card-wrapper.flipped .sensor-card-inner {
+    transform: rotateY(180deg);
+}
+
+.sensor-card {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow: hidden;
+}
+
+/* Front Side - AQI Display */
+.aqi-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem 1rem;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    flex: 1;
+}
+
+.aqi-value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    font-family: var(--font-display);
+    line-height: 1;
+}
+
+/* Back Side - Details Grid */
+.details-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    flex: 1;
+    overflow-y: auto;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.detail-row:hover {
+    background: rgba(93, 134, 108, 0.05);
+    border-color: var(--sage);
+    transform: translateX(4px);
+}
+
+.detail-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+}
+
+.detail-icon.no2 {
+    background: rgba(107, 158, 184, 0.15);
+    color: var(--info);
+}
+
+.detail-icon.co {
+    background: rgba(212, 165, 116, 0.15);
+    color: var(--warning);
+}
+
+.detail-icon.smoke {
+    background: rgba(184, 92, 92, 0.15);
+    color: var(--danger);
+}
+
+.detail-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-family: var(--font-display);
+}
+
+
+================================================================================
+8. BLOG PAGE TEMPLATE (core/templates/blog_detail.html)
+================================================================================
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>{{ post.title }} - Blog</title>
+</head>
+<body>
+<div class="blog-container">
+  <article class="blog-post">
+    <h1 class="post-title">{{ post.title }}</h1>
+    
+    {% if post.image %}
+    <img src="{{ post.image.url }}" alt="{{ post.title }}" class="featured-image">
+    {% endif %}
+    
+    <div class="post-meta">
+      <span>Published on {{ post.created_at|date:"M d, Y" }}</span>
+    </div>
+
+    <div class="post-content">
+      {{ post.content|safe }}
+    </div>
+
+    {% if post.tags %}
+    <div class="post-tags">
+      {% for tag in post.tags.all %}
+      <span class="tag">{{ tag.name }}</span>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </article>
+
+  <section class="comments">
+    <h3>Comments</h3>
+    <div class="comment-list">
+      {% for comment in post.comments.all %}
+      <div class="comment">
+        <div class="author">{{ comment.author }}</div>
+        <div class="body">{{ comment.body }}</div>
+      </div>
+      {% empty %}
+      <p>No comments yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <form method="post" class="comment-form">
+      {% csrf_token %}
+      <textarea name="body" placeholder="Share your thoughts..." required></textarea>
+      <button type="submit">Post Comment</button>
+    </form>
+    {% else %}
+    <p>Please log in to comment.</p>
+    {% endif %}
+  </section>
+</div>
+</body>
+</html>
+
+
+================================================================================
+9. BLOG LIST PAGE WITH ADD BUTTON (core/templates/blog.html)
+================================================================================
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Blog - AQI Project</title>
+</head>
+<body>
+<div class="main-content">
+    <div class="blog-list-container">
+        <div class="blog-list-header">
+            <h1 class="blog-list-title">Environmental Blog</h1>
+            <p class="blog-list-subtitle">Latest insights on air quality</p>
+            <button class="btn-add-post" title="Add new blog post">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        {% if posts %}
+        <div class="blog-grid">
+            {% for post in posts %}
+            <article class="blog-card">
+                {% if post.image %}
+                <div class="card-image">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                </div>
+                {% endif %}
+                
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <a href="{% url 'blog_detail' post.slug %}">{{ post.title }}</a>
+                    </h2>
+                    
+                    <div class="card-meta">
+                        <span class="meta-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ post.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                    
+                    <p class="card-excerpt">
+                        {{ post.content|truncatewords:30|safe }}
+                    </p>
+                    
+                    <div class="card-footer">
+                        <a href="{% url 'blog_detail' post.slug }}" class="btn-read-more">
+                            Read More
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-posts">
+            <i class="fas fa-inbox"></i>
+            <p>No blog posts yet.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.querySelector('.btn-add-post');
+    if (addBtn) {
+        addBtn.addEventListener('click', function() {
+            window.location.href = '/admin/core/blogpost/add/';
+        });
+    }
+});
+</script>
+</body>
+</html>
+
+
+================================================================================
+10. URL ROUTING (core/urls.py, api/urls.py)
+================================================================================
+
+# core/urls.py
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path("", views.dashboard, name="dashboard"),
+    path("analytics/", views.analytics, name="analytics"),
+    path("blog/", views.blog, name="blog"),
+    path("blog/<slug:slug>/", views.blog_detail, name="blog_detail"),
+    path("settings/", views.settings, name="settings"),
+]
+
+# api/urls.py
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from . import views
+
+router = DefaultRouter()
+router.register(r'sensors', views.SensorViewSet, basename='sensor')
+router.register(r'readings', views.ReadingViewSet, basename='reading')
+
+urlpatterns = [
+    path('', include(router.urls)),
+    path('sensor-data/', views.sensor_data_endpoint, name='sensor-data'),
+    path('start-simulation/', views.start_simulation, name='start-simulation'),
+    path('stop-simulation/', views.stop_simulation, name='stop-simulation'),
+    path('simulation-state/', views.simulation_state_endpoint, name='simulation-state'),
+]
+
+
+================================================================================
+11. SENSOR CARD COMPONENT STRUCTURE (core/templates/dashboard.html)
+================================================================================
+
+<div class="sensor-card-wrapper" data-sensor-id="{{ sensor.id }}">
+    <div class="sensor-card-inner">
+        
+        <!-- FRONT CARD - AQI DISPLAY -->
+        <div class="sensor-card front">
+            <div class="sensor-card-header">
+                <div class="sensor-icon-badge">
+                    <i class="fas fa-broadcast-tower"></i>
+                </div>
+                <div class="sensor-identity">
+                    <h4>{{ sensor.name }}</h4>
+                    <p><i class="fas fa-map-pin"></i> {{ sensor.area }}</p>
+                </div>
+                <div class="sensor-status-badge online">
+                    <i class="fas fa-circle"></i>
+                </div>
+            </div>
+
+            <div class="aqi-display">
+                <div class="aqi-label">
+                    <i class="fas fa-chart-line"></i> AIR QUALITY INDEX
+                </div>
+                <div class="aqi-value-wrapper">
+                    <span class="aqi-value" style="color: {{ color }}">{{ aqi }}</span>
+                    <span class="aqi-category">{{ category }}</span>
+                </div>
+            </div>
+
+            <button class="flip-btn">
+                <i class="fas fa-chevron-right"></i> Details
+            </button>
+        </div>
+
+        <!-- BACK CARD - DETAILS GRID -->
+        <div class="sensor-card back">
+            <div class="sensor-card-header">
+                <div class="sensor-icon-badge">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="sensor-identity">
+                    <h4>{{ sensor.name }}</h4>
+                    <p>Detailed Metrics</p>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-row">
+                    <div class="detail-icon no2">
+                        <i class="fas fa-gas-pump"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Nitrogen Dioxide</div>
+                        <div class="detail-value">{{ no2 }}<span class="detail-unit">ppb</span></div>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-icon co">
+                        <i class="fas fa-smog"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Carbon Monoxide</div>
+                        <div class="detail-value">{{ co }}<span class="detail-unit">ppm</span></div>
+                    </div>
+                </div>
+
+                <div class="detail-row">
+                    <div class="detail-icon smoke">
+                        <i class="fas fa-wind"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Smoke Level</div>
+                        <div class="detail-value">{{ smoke }}<span class="detail-unit">µg/m³</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="flip-btn">
+                <i class="fas fa-chevron-left"></i> Back
+            </button>
+        </div>
+
+    </div>
+</div>
+
+
+================================================================================
+12. AQI COLOR FUNCTIONS (JavaScript & Python)
+================================================================================
+
+// JavaScript
+function getAQIColor(aqi) {
+    if (aqi <= 50) return '#00E396';      // Green - Good
+    if (aqi <= 100) return '#FEB019';     // Yellow - Moderate
+    if (aqi <= 150) return '#f05233';     // Orange - Unhealthy
+    return '#ce1c1c';                     // Red - Hazardous
+}
+
+function getAQICategory(aqi) {
+    if (aqi <= 50) return { text: 'Good', class: 'success' };
+    if (aqi <= 100) return { text: 'Moderate', class: 'warning' };
+    if (aqi <= 150) return { text: 'Unhealthy', class: 'danger' };
+    return { text: 'Hazardous', class: 'danger' };
+}
+
+function getHumidityColor(humidity) {
+    if (humidity <= 30) return '#1E3A8A';  // Blue - Dry
+    if (humidity <= 50) return '#0891B2';  // Cyan
+    if (humidity <= 65) return '#00E396';  // Green - Moderate
+    if (humidity <= 80) return '#FEB019';  // Yellow - High
+    return '#f05233';                      // Red - Very high
+}
+
+# Python (Django)
+def get_aqi_display(aqi):
+    """Return AQI display category based on value."""
+    if aqi <= 50:
+        return {'category': 'Good', 'color': '#00E396'}
+    elif aqi <= 100:
+        return {'category': 'Moderate', 'color': '#FEB019'}
+    elif aqi <= 150:
+        return {'category': 'Unhealthy', 'color': '#f05233'}
+    else:
+        return {'category': 'Hazardous', 'color': '#ce1c1c'}
+
+
+================================================================================
+13. FEATURES OVERVIEW
+================================================================================
+
+FRONTEND FEATURES:
+✓ Real-time sensor visualization on Leaflet.js map
+✓ 300-meter radius circles around each sensor
+✓ Street highlighting based on average humidity levels
+✓ Sensor card flip animation (front: AQI, back: details)
+✓ Interactive sensor selection and highlighting
+✓ Responsive dashboard with analytics
+✓ Heatmap view of AQI data
+✓ Peak pollution hours chart
+✓ Monthly AQI tracking
+✓ Terminal sidebar with simulation controls
+✓ Notification system
+✓ Toast notifications
+✓ Light/Dark mode toggle
+✓ Blog system with detailed pages
+✓ Blog listing with cards and "+" add button
+
+BACKEND FEATURES:
+✓ Django REST API with full CRUD operations
+✓ Sensor data simulation (JSON-based)
+✓ Database synchronization
+✓ Real-time sensor reading ingestion
+✓ Blog post management
+✓ User authentication
+✓ Data validation and error handling
+✓ Pagination and filtering
+✓ Admin panel integration
+
+
+================================================================================
+14. KEY FILES STRUCTURE
+================================================================================
+
+/workspaces/aqiproject/
+├── aqiproject/              # Django project settings
+│   ├── settings.py
+│   ├── urls.py
+│   ├── asgi.py
+│   └── wsgi.py
+├── core/                    # Main app with models and views
+│   ├── models.py            # Sensor, Reading, BlogPost models
+│   ├── views.py             # Dashboard, analytics, blog views
+│   ├── urls.py              # URL routing
+│   ├── admin.py             # Django admin configuration
+│   ├── migrations/          # Database migrations
+│   └── templates/
+│       ├── dashboard.html   # Main dashboard
+│       ├── blog.html        # Blog listing
+│       ├── blog_detail.html # Blog detail page
+│       ├── settings.html
+│       └── analytics.html
+├── api/                     # REST API
+│   ├── views.py             # API endpoints
+│   ├── serializers.py       # Model serializers
+│   ├── urls.py              # API routing
+│   └── permissions.py
+├── static/
+│   ├── css/
+│   │   └── styles.css       # Main stylesheet (3500+ lines)
+│   ├── js/
+│   │   ├── app.js           # Main app logic
+│   │   ├── map.js           # Leaflet map integration
+│   │   ├── blog.js
+│   │   ├── aqi_widget_terminal.js
+│   │   └── map.js
+│   ├── sensor_data.json     # Simulated sensor data
+│   ├── sensor_logs.json
+│   └── img/
+├── media/                   # User uploaded files
+├── manage.py
+└── db.sqlite3
+
+
+================================================================================
+15. COMMAND REFERENCE
+================================================================================
+
+Django Management Commands:
+  python manage.py runserver              # Start development server
+  python manage.py makemigrations         # Create migrations
+  python manage.py migrate                # Apply migrations
+  python manage.py createsuperuser        # Create admin user
+  python manage.py shell                  # Python shell
+  python manage.py collectstatic          # Collect static files
+
+API Endpoints:
+  GET  http://localhost:8000/api/sensors/
+  GET  http://localhost:8000/api/sensors/1/readings/?hours=24
+  GET  http://localhost:8000/api/sensor-data/
+  POST http://localhost:8000/api/start-simulation/
+  POST http://localhost:8000/api/stop-simulation/
+  GET  http://localhost:8000/api/blog/
+
+Web Routes:
+  GET  http://localhost:8000/              # Dashboard
+  GET  http://localhost:8000/blog/         # Blog listing
+  GET  http://localhost:8000/blog/slug/    # Blog detail
+  GET  http://localhost:8000/analytics/    # Analytics
+  GET  http://localhost:8000/settings/     # Settings
+
+================================================================================
+END OF CODE SNIPPETS
+================================================================================

@@ -1,0 +1,114 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <title>Blog - AQI Project</title>
+</head>
+<body>
+<div class="main-content">
+    <div class="blog-list-container">
+        <div class="blog-list-header">
+            <h1 class="blog-list-title">Environmental Blog</h1>
+            <p class="blog-list-subtitle">Latest insights on air quality and environmental pollutants</p>
+            <button class="btn-add-post" title="Add new blog post">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+
+        {% if posts %}
+        <div class="blog-grid">
+            {% for post in posts %}
+            <article class="blog-card">
+                {% if post.image %}
+                <div class="card-image">
+                    <img src="{{ post.image.url }}" alt="{{ post.title }}">
+                </div>
+                {% endif %}
+                
+                <div class="card-content">
+                    <h2 class="card-title">
+                        <a href="{% url 'blog_detail' post.slug %}">{{ post.title }}</a>
+                    </h2>
+                    
+                    <div class="card-meta">
+                        <span class="meta-date">
+                            <i class="fas fa-calendar-alt"></i>
+                            {{ post.created_at|date:"M d, Y" }}
+                        </span>
+                    </div>
+                    
+                    <p class="card-excerpt">
+                        {{ post.content|truncatewords:30|safe }}
+                    </p>
+                    
+                    {% if post.tags.all %}
+                    <div class="card-tags">
+                        {% for tag in post.tags.all %}
+                        <span class="tag-badge">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <div class="card-footer">
+                        <a href="{% url 'blog_detail' post.slug %}" class="btn-read-more">
+                            Read More
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-posts">
+            <i class="fas fa-inbox"></i>
+            <p>No blog posts yet. Check back soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal for adding new post (placeholder) -->
+<div id="addPostModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create New Blog Post</h2>
+        <form method="post" action="{% url 'admin:core_blogpost_add' %}">
+            {% csrf_token %}
+            <p style="color: var(--text-muted); margin-top: 1rem;">Redirecting to admin panel...</p>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const addBtn = document.querySelector('.btn-add-post');
+    const modal = document.getElementById('addPostModal');
+    const closeBtn = document.querySelector('.close');
+
+    if (addBtn && modal) {
+        addBtn.addEventListener('click', function() {
+            // Redirect to Django admin to add a new post
+            window.location.href = '/admin/core/blogpost/add/';
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    }
+});
+</script>
+
+</body>
+</html>

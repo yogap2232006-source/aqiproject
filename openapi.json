@@ -1,0 +1,1245 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "AQI Project API",
+    "description": "Air Quality Index (AQI) monitoring system API with sensor simulation, data ingestion, and blog management",
+    "version": "1.0.0",
+    "contact": {
+      "name": "AQI Project Support"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8000/api",
+      "description": "Development server"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Sensors",
+      "description": "Sensor management and queries"
+    },
+    {
+      "name": "Readings",
+      "description": "Sensor readings ingestion and retrieval"
+    },
+    {
+      "name": "Simulation",
+      "description": "Sensor simulation control"
+    },
+    {
+      "name": "Database Sync",
+      "description": "Database synchronization from JSON files"
+    },
+    {
+      "name": "Blog",
+      "description": "Blog post management"
+    }
+  ],
+  "paths": {
+    "/sensors/": {
+      "get": {
+        "tags": ["Sensors"],
+        "summary": "List all active sensors",
+        "operationId": "listSensors",
+        "responses": {
+          "200": {
+            "description": "List of active sensors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Sensor"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sensors/{id}/": {
+      "get": {
+        "tags": ["Sensors"],
+        "summary": "Retrieve a single sensor",
+        "operationId": "retrieveSensor",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sensor details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Sensor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sensor not found"
+          }
+        }
+      }
+    },
+    "/sensors/{sensor_id}/readings/": {
+      "get": {
+        "tags": ["Sensors"],
+        "summary": "Get readings for a specific sensor",
+        "operationId": "getSensorReadings",
+        "parameters": [
+          {
+            "name": "sensor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The unique identifier of the sensor"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            },
+            "description": "Maximum number of readings to return"
+          },
+          {
+            "name": "hours",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 24
+            },
+            "description": "Number of hours to look back"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sensor readings with statistics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorReadingsResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Sensor not found"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/sensors/{sensor_id}/forecast/": {
+      "get": {
+        "tags": ["Sensors"],
+        "summary": "Get 24-hour AQI forecast for a sensor",
+        "operationId": "getSensorForecast",
+        "parameters": [
+          {
+            "name": "sensor_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "AQI forecast data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SensorForecastResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Insufficient historical data for forecasting"
+          },
+          "404": {
+            "description": "Sensor not found"
+          }
+        }
+      }
+    },
+    "/readings/": {
+      "get": {
+        "tags": ["Readings"],
+        "summary": "List all readings with optional filtering",
+        "operationId": "listReadings",
+        "parameters": [
+          {
+            "name": "sensor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by sensor ID or sensor name"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "Start datetime (ISO 8601)"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "description": "End datetime (ISO 8601)"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Limit number of results"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of readings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Reading"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ingest/": {
+      "post": {
+        "tags": ["Readings"],
+        "summary": "Ingest a single sensor reading",
+        "operationId": "ingestReading",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReadingIngestionRequest"
+              },
+              "example": {
+                "sensor_id": "KP-002",
+                "sensor_name": "KP-002",
+                "timestamp": "2026-02-09 12:34:56",
+                "temperature": 25.1,
+                "humidity": 55.2,
+                "pm25": 42.3,
+                "no2": 12.1,
+                "co": 0.6,
+                "aqi": 42,
+                "aqi_category": "Moderate",
+                "aqi_color": "Yellow",
+                "latitude": 13.0818,
+                "longitude": 80.2460
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Reading successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Reading"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        }
+      }
+    },
+    "/readings/bulk_ingest/": {
+      "post": {
+        "tags": ["Readings"],
+        "summary": "Bulk ingest multiple sensor readings",
+        "operationId": "bulkIngestReadings",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/ReadingIngestionRequest"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bulk ingestion results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BulkIngestResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Partial or complete ingestion failure"
+          }
+        }
+      }
+    },
+    "/simulation/start/": {
+      "post": {
+        "tags": ["Simulation"],
+        "summary": "Start the sensor simulation and DB sync",
+        "operationId": "startSimulation",
+        "responses": {
+          "200": {
+            "description": "Simulation started successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/stop/": {
+      "post": {
+        "tags": ["Simulation"],
+        "summary": "Stop the sensor simulation and DB sync",
+        "operationId": "stopSimulation",
+        "responses": {
+          "200": {
+            "description": "Simulation stopped successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/reset/": {
+      "post": {
+        "tags": ["Simulation"],
+        "summary": "Reset simulation, clear logs, and reset data files",
+        "operationId": "resetSimulation",
+        "responses": {
+          "200": {
+            "description": "Simulation reset successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/status/": {
+      "get": {
+        "tags": ["Simulation"],
+        "summary": "Get current simulation status",
+        "operationId": "getSimulationStatus",
+        "responses": {
+          "200": {
+            "description": "Current simulation status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationStatus"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/data/": {
+      "get": {
+        "tags": ["Simulation"],
+        "summary": "Get current simulated sensor data",
+        "operationId": "getSimulationData",
+        "responses": {
+          "200": {
+            "description": "Current sensor data from simulation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimulationDataResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/history/": {
+      "get": {
+        "tags": ["Simulation"],
+        "summary": "Get historical simulation data from file",
+        "operationId": "getSimulationHistory",
+        "parameters": [
+          {
+            "name": "sensor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by sensor name"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Limit number of records returned"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Historical simulation data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HistoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/logs/": {
+      "get": {
+        "tags": ["Simulation"],
+        "summary": "Get simulation logs",
+        "operationId": "getSimulationLogs",
+        "responses": {
+          "200": {
+            "description": "Current simulation logs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "logs": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/LogEntry"
+                      }
+                    },
+                    "running": {
+                      "type": "boolean"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/set_sensor_count/": {
+      "post": {
+        "tags": ["Simulation"],
+        "summary": "Set the active sensor count for simulation",
+        "operationId": "setSensorCount",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "count": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 10,
+                    "description": "Number of sensors to simulate (1-10)"
+                  }
+                },
+                "required": ["count"]
+              },
+              "example": {
+                "count": 5
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sensor count updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "sensor_count": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/debug/": {
+      "get": {
+        "tags": ["Simulation"],
+        "summary": "Get debug information about simulation files and state",
+        "operationId": "debugSimulationFiles",
+        "responses": {
+          "200": {
+            "description": "Debug diagnostics",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DebugInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/simulation/manual-sync/": {
+      "post": {
+        "tags": ["Database Sync"],
+        "summary": "Manually trigger database sync from JSON file",
+        "operationId": "manualDbSync",
+        "responses": {
+          "200": {
+            "description": "Manual sync completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ManualSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sensor_logs/": {
+      "get": {
+        "tags": ["Simulation"],
+        "summary": "Get sensor logs (legacy endpoint)",
+        "operationId": "getSensorLogs",
+        "responses": {
+          "200": {
+            "description": "Sensor logs array",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/LogEntry"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/blogposts/": {
+      "get": {
+        "tags": ["Blog"],
+        "summary": "List published blog posts",
+        "operationId": "listBlogPosts",
+        "responses": {
+          "200": {
+            "description": "List of published blog posts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BlogPost"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Blog"],
+        "summary": "Create a new blog post",
+        "operationId": "createBlogPost",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/BlogPostCreateRequest"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BlogPostCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Blog post created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request data"
+          }
+        }
+      }
+    },
+    "/blogposts/{id}/": {
+      "get": {
+        "tags": ["Blog"],
+        "summary": "Retrieve a single blog post",
+        "operationId": "retrieveBlogPost",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Blog post details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Blog"],
+        "summary": "Update a blog post",
+        "operationId": "updateBlogPost",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/BlogPostCreateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Blog post updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlogPost"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Blog"],
+        "summary": "Delete a blog post",
+        "operationId": "deleteBlogPost",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Blog post deleted"
+          },
+          "404": {
+            "description": "Blog post not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Sensor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sensor_id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "area": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "is_active": {
+            "type": "boolean"
+          }
+        },
+        "required": ["id", "sensor_id", "name"]
+      },
+      "Reading": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "sensor": {
+            "type": "integer",
+            "description": "Sensor foreign key ID"
+          },
+          "slave_id": {
+            "type": "integer"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float"
+          },
+          "humidity": {
+            "type": "number",
+            "format": "float"
+          },
+          "air_quality": {
+            "type": "number",
+            "format": "float",
+            "description": "AQI value"
+          },
+          "aqi_category": {
+            "type": "string",
+            "enum": ["Excellent", "Moderate", "Unhealthy"]
+          },
+          "aqi_color": {
+            "type": "string",
+            "enum": ["Green", "Yellow", "Red"]
+          },
+          "co_level": {
+            "type": "number",
+            "format": "float"
+          },
+          "no_level": {
+            "type": "number",
+            "format": "float"
+          },
+          "smoke": {
+            "type": "number",
+            "format": "float"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["id", "sensor", "timestamp"]
+      },
+      "ReadingIngestionRequest": {
+        "type": "object",
+        "properties": {
+          "sensor_id": {
+            "type": "string",
+            "description": "Unique sensor identifier; sensor will be created if missing"
+          },
+          "sensor_name": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "description": "ISO 8601 or 'YYYY-MM-DD HH:MM:SS' format"
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float"
+          },
+          "humidity": {
+            "type": "number",
+            "format": "float"
+          },
+          "pm25": {
+            "type": "number",
+            "format": "float"
+          },
+          "air_quality": {
+            "type": "number",
+            "format": "float"
+          },
+          "aqi": {
+            "type": "number",
+            "format": "float"
+          },
+          "aqi_category": {
+            "type": "string"
+          },
+          "aqi_color": {
+            "type": "string"
+          },
+          "no2": {
+            "type": "number",
+            "format": "float"
+          },
+          "co": {
+            "type": "number",
+            "format": "float"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["sensor_id", "timestamp"]
+      },
+      "BulkIngestResponse": {
+        "type": "object",
+        "properties": {
+          "created_count": {
+            "type": "integer"
+          },
+          "error_count": {
+            "type": "integer"
+          },
+          "created_ids": {
+            "type": "array",
+            "items": {
+              "type": "integer"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "SensorReadingsResponse": {
+        "type": "object",
+        "properties": {
+          "sensor_id": {
+            "type": "string"
+          },
+          "sensor_name": {
+            "type": "string"
+          },
+          "readings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Reading"
+            }
+          },
+          "stats": {
+            "type": "object",
+            "properties": {
+              "current_aqi": {
+                "type": "number"
+              },
+              "avg_aqi": {
+                "type": "number"
+              },
+              "max_aqi": {
+                "type": "number"
+              },
+              "min_aqi": {
+                "type": "number"
+              },
+              "current_temp": {
+                "type": "number"
+              },
+              "current_humidity": {
+                "type": "number"
+              },
+              "current_co": {
+                "type": "number"
+              },
+              "current_no": {
+                "type": "number"
+              },
+              "current_smoke": {
+                "type": "number"
+              }
+            }
+          },
+          "count": {
+            "type": "integer"
+          }
+        }
+      },
+      "SensorForecastResponse": {
+        "type": "object",
+        "properties": {
+          "sensor_id": {
+            "type": "string"
+          },
+          "sensor_name": {
+            "type": "string"
+          },
+          "current_aqi": {
+            "type": "number"
+          },
+          "forecast": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "hour": {
+                  "type": "string"
+                },
+                "predicted_aqi": {
+                  "type": "number"
+                },
+                "confidence": {
+                  "type": "number",
+                  "format": "float"
+                }
+              }
+            }
+          },
+          "trend": {
+            "type": "string",
+            "enum": ["increasing", "decreasing", "stable"]
+          }
+        }
+      },
+      "SimulationResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "total_synced_to_db": {
+            "type": "integer"
+          }
+        }
+      },
+      "SimulationStatus": {
+        "type": "object",
+        "properties": {
+          "running": {
+            "type": "boolean"
+          },
+          "log_count": {
+            "type": "integer"
+          },
+          "sensor_count": {
+            "type": "integer"
+          },
+          "active_sensor_count": {
+            "type": "integer"
+          },
+          "db_sync_running": {
+            "type": "boolean"
+          },
+          "db_sync_total_synced": {
+            "type": "integer"
+          },
+          "db_sync_last_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "SimulationDataResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "running": {
+            "type": "boolean"
+          },
+          "history_count": {
+            "type": "integer"
+          }
+        }
+      },
+      "HistoryResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "count": {
+            "type": "integer"
+          },
+          "running": {
+            "type": "boolean"
+          }
+        }
+      },
+      "LogEntry": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string"
+          },
+          "level": {
+            "type": "string",
+            "enum": ["INFO", "DEBUG", "ERROR", "SUCCESS", "SYSTEM", "DATA"]
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "ManualSyncResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
+          },
+          "synced_count": {
+            "type": "integer"
+          },
+          "error_count": {
+            "type": "integer"
+          },
+          "total_synced": {
+            "type": "integer"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "DebugInfo": {
+        "type": "object",
+        "properties": {
+          "data_path": {
+            "type": "string"
+          },
+          "log_path": {
+            "type": "string"
+          },
+          "data_file_exists": {
+            "type": "boolean"
+          },
+          "log_file_exists": {
+            "type": "boolean"
+          },
+          "data_file_size": {
+            "type": "integer"
+          },
+          "log_file_size": {
+            "type": "integer"
+          },
+          "data_readable": {
+            "type": "boolean"
+          },
+          "log_readable": {
+            "type": "boolean"
+          },
+          "directory_writable": {
+            "type": "boolean"
+          },
+          "memory_sensor_count": {
+            "type": "integer"
+          },
+          "memory_log_count": {
+            "type": "integer"
+          },
+          "simulation_running": {
+            "type": "boolean"
+          }
+        }
+      },
+      "BlogPost": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "featured_image": {
+            "type": "string",
+            "format": "uri"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published"]
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "published_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "username": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BlogPostCreateRequest": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "slug": {
+            "type": "string"
+          },
+          "excerpt": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "featured_image": {
+            "type": "string",
+            "format": "binary"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["draft", "published"]
+          }
+        },
+        "required": ["title", "content"]
+      }
+    }
+  }
+}

@@ -43,6 +43,19 @@ function getAQICategory(aqi) {
     return { text: 'Hazardous', class: 'danger' };
 }
 
+function getHumidityColor(humidity) {
+    // Low humidity (dry): Blue
+    if (humidity <= 30) return '#1E3A8A';
+    // Low-moderate humidity: Cyan
+    if (humidity <= 50) return '#0891B2';
+    // Moderate humidity: Green
+    if (humidity <= 65) return '#00E396';
+    // High humidity: Yellow/Orange
+    if (humidity <= 80) return '#FEB019';
+    // Very high humidity: Red (indicates potential issues)
+    return '#f05233';
+}
+
 async function getCSRFToken() {
     const name = 'csrftoken';
     const cookies = document.cookie ? document.cookie.split(';') : [];
@@ -1352,13 +1365,19 @@ async function fetchSimulatedSensorData() {
                 aqi: s.aqi,
                 no2: s.no2,
                 co: s.co,
-                smoke: s.smoke
+                smoke: s.smoke,
+                humidity: s.humidity || 50 // Add humidity data for street highlighting
             };
         });
 
         console.log('📊 Fetched sensor data:', window.sensorState);
 
         updateSensorCardsFromDB();
+        
+        // Update street polylines with new humidity data
+        if (typeof window.updateStreetPolylineColors === 'function') {
+            window.updateStreetPolylineColors();
+        }
         
         // Update street view if a sensor is selected
         if (window.selectedSensorId) {

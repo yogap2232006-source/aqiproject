@@ -7,6 +7,8 @@ let tileLayer;
 let restrictedBounds;
 window.markerStack = {};
 let markerGroup;
+let streetPolylines = {}; // Store street polylines for humidity highlighting
+let sensorRadiusCircles = {}; // Store sensor radius circles (300m)
 
 // ============================================================================
 // SENSOR DATA (SOURCE OF TRUTH)
@@ -54,6 +56,11 @@ function initMap() {
     loadTiles();
     initControls();
     initMapThemeSync();
+    
+    // Initialize street polylines with humidity-based colors
+    setTimeout(() => {
+        initializeStreetPolylines();
+    }, 300);
 
     setTimeout(() => map.invalidateSize(), 200);
 }
@@ -131,6 +138,126 @@ function getAQIColor(aqi) {
     return '#ce1c1c';
 }
 
+function getHumidityColor(humidity) {
+    // Low humidity (dry): Blue
+    if (humidity <= 30) return '#1E3A8A';
+    // Low-moderate humidity: Cyan
+    if (humidity <= 50) return '#0891B2';
+    // Moderate humidity: Green
+    if (humidity <= 65) return '#00E396';
+    // High humidity: Yellow/Orange
+    if (humidity <= 80) return '#FEB019';
+    // Very high humidity: Red (indicates potential issues)
+    return '#f05233';
+}
+
+// Group sensors by street and calculate average humidity
+function getStreetHumidities() {
+    const streetData = {};
+    
+    // Group sensors by street name
+    for (let idx in window.sensors) {
+        const sensor = window.sensors[idx];
+        if (!streetData[sensor.name]) {
+            streetData[sensor.name] = {
+                coords: [],
+                humidities: [],
+                name: sensor.name
+            };
+        }
+        streetData[sensor.name].coords.push([sensor.lat, sensor.lng]);
+        
+        // Get humidity from sensor state
+        const sensorState = window.sensorState?.[sensor.id] || window.sensorState?.[sensor.name];
+        const humidity = sensorState?.humidity || 50; // Default to 50% if not available
+        streetData[sensor.name].humidities.push(humidity);
+    }
+    
+    // Calculate average humidity for each street
+    for (let street in streetData) {
+        const data = streetData[street];
+        const avgHumidity = data.humidities.length > 0 
+            ? data.humidities.reduce((a, b) => a + b, 0) / data.humidities.length 
+            : 50;
+        data.avgHumidity = avgHumidity;
+    }
+    
+    return streetData;
+}
+
+// Create polylines for streets with humidity-based colors
+function initializeStreetPolylines() {
+    if (!map) return;
+    
+    const streetData = getStreetHumidities();
+    
+    // Clear existing polylines
+    for (let street in streetPolylines) {
+        if (streetPolylines[street].polyline) {
+            map.removeLayer(streetPolylines[street].polyline);
+        }
+    }
+    streetPolylines = {};
+    
+    // Create polylines for each street
+    for (let street in streetData) {
+        const data = streetData[street];
+        if (data.coords.length < 2) continue; // Need at least 2 points
+        
+        const color = getHumidityColor(data.avgHumidity);
+        const polyline = L.polyline(data.coords, {
+            color: color,
+            weight: 6,
+            opacity: 0.7,
+            lineCap: 'round',
+            lineJoin: 'round'
+        }).addTo(map);
+        
+        // Add tooltip with street name and humidity
+        polyline.bindTooltip(`${street}<br>Humidity: ${Math.round(data.avgHumidity)}%`, {
+            sticky: true
+        });
+        
+        streetPolylines[street] = {
+            polyline: polyline,
+            coords: data.coords,
+            humidity: data.avgHumidity,
+            color: color
+        };
+    }
+    
+    console.log('✅ Street polylines initialized with humidity colors');
+}
+
+// Update street polyline colors based on current humidity data
+function updateStreetPolylineColors() {
+    if (!map || Object.keys(streetPolylines).length === 0) return;
+    
+    const streetData = getStreetHumidities();
+    
+    for (let street in streetPolylines) {
+        const data = streetData[street];
+        if (!data) continue;
+        
+        const newColor = getHumidityColor(data.avgHumidity);
+        const polylineData = streetPolylines[street];
+        
+        // Update polyline color if changed
+        if (newColor !== polylineData.color) {
+            polylineData.polyline.setStyle({ color: newColor });
+            polylineData.color = newColor;
+            polylineData.humidity = data.avgHumidity;
+            
+            // Update tooltip
+            polylineData.polyline.setTooltipContent(
+                `${street}<br>Humidity: ${Math.round(data.avgHumidity)}%`
+            );
+        }
+    }
+    
+    console.log('✅ Street polyline colors updated based on humidity');
+}
+
 function pushMarker(index) {
     if (window.markerStack[index]) return;
 
@@ -140,7 +267,26 @@ function pushMarker(index) {
     // Get AQI from sensorState if available, otherwise use default
     const sensorData = window.sensorState?.[sensor.id] || window.sensorState?.[sensor.name];
     const aqi = sensorData?.aqi ?? (25 + (index * 15));
+    const humidity = sensorData?.humidity ?? 50;
     const color = getAQIColor(aqi);
+
+    // Add 300m radius circle around sensor
+    const radiusCircle = L.circle(
+        [sensor.lat, sensor.lng],
+        {
+            radius: 300, // 300 meters
+            fillColor: color,
+            fillOpacity: 0.15,
+            color: color,
+            weight: 2,
+            dashArray: '5,5',
+            lineCap: 'round',
+            lineJoin: 'round'
+        }
+    );
+    
+    radiusCircle.addTo(map);
+    sensorRadiusCircles[index] = radiusCircle;
 
     const marker = L.circleMarker(
         [sensor.lat, sensor.lng],
@@ -154,7 +300,8 @@ function pushMarker(index) {
     ).bindPopup(`
         <b>${sensor.id}</b><br>
         ${sensor.name}<br>
-        AQI: ${aqi}
+        AQI: ${aqi}<br>
+        Humidity: ${Math.round(humidity)}%
     `);
 
     // ✅ ADD CLICK HANDLER TO MARKER
@@ -203,6 +350,7 @@ window.addEventListener('sensorCountChanged', (e) => {
 // Listen for sensor data updates to refresh marker colors
 window.addEventListener('sensorDataUpdated', () => {
     updateMarkerColors();
+    updateStreetPolylineColors(); // Update street colors based on humidity
 });
 
 function syncMarkersToCount(newCount) {
@@ -227,6 +375,13 @@ function syncMarkersToCount(newCount) {
                 markerGroup.removeLayer(marker);
                 delete window.markerStack[i];
             }
+            
+            // Remove radius circle
+            const radiusCircle = sensorRadiusCircles[i];
+            if (radiusCircle) {
+                map.removeLayer(radiusCircle);
+                delete sensorRadiusCircles[i];
+            }
         }
     }
 
@@ -243,6 +398,7 @@ function updateMarkerColors() {
         const marker = window.markerStack[index];
         const sensorData = window.sensorState?.[sensor.id] || window.sensorState?.[sensor.name];
         const aqi = sensorData?.aqi ?? (25 + (parseInt(index) * 15));
+        const humidity = sensorData?.humidity ?? 50;
         const color = getAQIColor(aqi);
 
         // Update marker color
@@ -250,11 +406,21 @@ function updateMarkerColors() {
             fillColor: color
         });
 
+        // Update radius circle color
+        const radiusCircle = sensorRadiusCircles[index];
+        if (radiusCircle) {
+            radiusCircle.setStyle({
+                fillColor: color,
+                color: color
+            });
+        }
+
         // Update popup content
         marker.setPopupContent(`
             <b>${sensor.id}</b><br>
             ${sensor.name}<br>
-            AQI: ${aqi}
+            AQI: ${aqi}<br>
+            Humidity: ${Math.round(humidity)}%
         `);
     });
 }
@@ -282,6 +448,10 @@ window.selectSensor = async function(sensorId, sensorIndex) {
         await window.updateAnalyticsForSensor(sensorId);
     }
 };
+
+// Expose street polyline update function globally
+window.updateStreetPolylineColors = updateStreetPolylineColors;
+window.initializeStreetPolylines = initializeStreetPolylines;
 
 // ============================================================================
 // INIT
