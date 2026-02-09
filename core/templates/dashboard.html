@@ -25,13 +25,16 @@
             <button class="menu-toggle">
                 <i class="fa-solid fa-bars"></i>
             </button>
-            <form style="padding: 0;" class="search-bar">
-                <i style="margin-left: 2px;" class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="AQI monitoring Zone: Kilpauk and Egmore" readonly>
-                <button type="#" class="btn-primary">
-                    Search
-                </button>
-            </form>
+            
+            <!-- AIRDON Branding (replaces search bar) -->
+            <div style="display: flex; align-items: center; gap: 0.75rem; font-family: var(--font-display); font-size: 1.75rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; background: linear-gradient(135deg, var(--sage), #6B9EB8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; position: relative; padding-left: 14px;">
+                <div style="position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 4px; height: 28px; background: linear-gradient(180deg, var(--sage), #6B9EB8); border-radius: 2px;"></div>
+                <div style="width: 40px; height: 40px; background: linear-gradient(135deg, var(--sage), #6B9EB8); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.25rem; box-shadow: 0 4px 12px rgba(93, 134, 108, 0.3);">
+                    <i class="fas fa-wind"></i>
+                </div>
+                AIRDON
+                <span style="font-size: 0.65rem; color: var(--text-muted); letter-spacing: 1.5px; font-weight: 600; margin-left: 0.5rem;">AIR QUALITY MONITOR</span>
+            </div>
 
             <div class="user-profile">
                 <div class="profile-actions">
@@ -356,6 +359,143 @@
                     <div class="empty-state" id="blogLoading">Loading posts...</div>
                 </div>
             </section>
+
+            <!-- Microsensor Request Form Section -->
+            <section class="sensor-section" style="margin-top: 3rem;">
+                <div class="section-header">
+                    <h2>Request Microsensor Installation</h2>
+                    <p class="section-subtitle">Help expand our air quality monitoring network in your area</p>
+                </div>
+                
+                <div class="card" style="max-width: 800px; margin: 0 auto;">
+                    <form id="sensorRequestForm" style="display: grid; gap: 1.25rem;">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.25rem;">
+                            <!-- Full Name -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-user" style="color: var(--sage);"></i>
+                                    Full Name <span style="color: var(--danger);">*</span>
+                                </label>
+                                <input type="text" name="full_name" placeholder="John Doe" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                            </div>
+
+                            <!-- Email -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-envelope" style="color: var(--sage);"></i>
+                                    Email <span style="color: var(--danger);">*</span>
+                                </label>
+                                <input type="email" name="email" placeholder="john@example.com" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                            </div>
+
+                            <!-- Phone -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-phone" style="color: var(--sage);"></i>
+                                    Phone <span style="color: var(--danger);">*</span>
+                                </label>
+                                <input type="tel" name="phone" placeholder="+91 98765 43210" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                            </div>
+
+                            <!-- Area -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-map-marker-alt" style="color: var(--sage);"></i>
+                                    Area/Locality <span style="color: var(--danger);">*</span>
+                                </label>
+                                <input type="text" name="area" placeholder="T. Nagar, Chennai" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                            </div>
+
+                            <!-- Latitude -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-globe" style="color: var(--sage);"></i>
+                                    Latitude <span style="color: var(--danger);">*</span>
+                                </label>
+                                <input type="text" name="latitude" placeholder="13.0827" pattern="^-?([1-8]?[0-9]\.{1}\d+|90\.{1}0+)$" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">e.g., 13.0827</span>
+                            </div>
+
+                            <!-- Longitude -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-globe" style="color: var(--sage);"></i>
+                                    Longitude <span style="color: var(--danger);">*</span>
+                                </label>
+                                <input type="text" name="longitude" placeholder="80.2707" pattern="^-?((1[0-7][0-9])|([1-9]?[0-9]))\.{1}\d+$" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                                <span style="font-size: 0.75rem; color: var(--text-muted);">e.g., 80.2707</span>
+                            </div>
+
+                            <!-- Installation Type -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-wrench" style="color: var(--sage);"></i>
+                                    Installation Type <span style="color: var(--danger);">*</span>
+                                </label>
+                                <select name="installation_type" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                                    <option value="">Select type</option>
+                                    <option value="residential">Residential</option>
+                                    <option value="commercial">Commercial</option>
+                                    <option value="public">Public Space</option>
+                                    <option value="educational">Educational</option>
+                                </select>
+                            </div>
+
+                            <!-- Reason -->
+                            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i class="fas fa-question-circle" style="color: var(--sage);"></i>
+                                    Reason <span style="color: var(--danger);">*</span>
+                                </label>
+                                <select name="reason" required style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem;">
+                                    <option value="">Select reason</option>
+                                    <option value="air_quality_concern">Air Quality Concerns</option>
+                                    <option value="health_issues">Health Issues</option>
+                                    <option value="industrial">Near Industrial Zone</option>
+                                    <option value="traffic">High Traffic Area</option>
+                                    <option value="research">Research/Educational</option>
+                                    <option value="community">Community Initiative</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Address (Full Width) -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-location-dot" style="color: var(--sage);"></i>
+                                Complete Address <span style="color: var(--danger);">*</span>
+                            </label>
+                            <textarea name="address" placeholder="Building/House number, Street name, Landmark..." required rows="3" style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; resize: vertical;"></textarea>
+                        </div>
+
+                        <!-- Additional Notes (Full Width) -->
+                        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                <i class="fas fa-comment" style="color: var(--sage);"></i>
+                                Additional Information
+                            </label>
+                            <textarea name="notes" placeholder="Any additional details..." rows="3" style="padding: 0.75rem 1rem; border: 1.5px solid var(--border-color); border-radius: 8px; background: var(--bg-primary); color: var(--text-primary); font-family: var(--font-body); font-size: 0.9rem; resize: vertical;"></textarea>
+                        </div>
+
+                        <!-- Form Actions -->
+                        <div style="display: flex; gap: 1rem; justify-content: flex-end; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                            <button type="button" onclick="document.getElementById('sensorRequestForm').reset()" style="padding: 0.9rem 1.5rem; border-radius: 8px; background: transparent; color: var(--text-secondary); border: 1.5px solid var(--border-color); cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: all 0.2s ease;">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                            <button type="submit" style="padding: 0.9rem 2rem; border-radius: 8px; background: linear-gradient(135deg, var(--sage), #5a7a60); color: white; border: none; cursor: pointer; font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                                <i class="fas fa-paper-plane"></i> Submit Request
+                            </button>
+                        </div>
+
+                        <!-- Success Message -->
+                        <div id="successMessage" style="background: rgba(93, 134, 108, 0.15); border: 1px solid var(--sage); border-radius: 8px; padding: 1rem; display: none; align-items: center; gap: 0.75rem; color: var(--sage);">
+                            <i class="fas fa-check-circle" style="font-size: 1.25rem;"></i>
+                            <span>Request submitted successfully! We'll contact you within 48 hours.</span>
+                        </div>
+                    </form>
+                </div>
+            </section>
             
         </section>
 
@@ -368,6 +508,51 @@
     <script src="{% static 'js/map.js' %}"></script>
     <script src="{% static 'js/app.js' %}"></script>
     <script src="{% static 'js/aqi_widget_terminal.js' %}"></script>
+
+    <script>
+        // Microsensor Request Form Handler
+        document.getElementById('sensorRequestForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            
+            console.log('Sensor Request Data:', data);
+            
+            // Show success message
+            const successMsg = document.getElementById('successMessage');
+            successMsg.style.display = 'flex';
+            
+            // Reset form and hide message after 3 seconds
+            setTimeout(() => {
+                this.reset();
+                successMsg.style.display = 'none';
+            }, 3000);
+            
+            // TODO: Send data to backend API
+            // const response = await fetch('/api/sensor-request/', {
+            //     method: 'POST',
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //         'X-CSRFToken': getCsrfToken()
+            //     },
+            //     body: JSON.stringify(data)
+            // });
+        });
+
+        // Responsive adjustments for AIRDON branding on mobile
+        window.addEventListener('resize', function() {
+            const tagline = document.querySelector('[style*="AIR QUALITY MONITOR"]');
+            if (tagline && window.innerWidth < 768) {
+                tagline.style.display = 'none';
+            } else if (tagline) {
+                tagline.style.display = 'inline';
+            }
+        });
+        
+        // Initial check
+        window.dispatchEvent(new Event('resize'));
+    </script>
 
 </body>
 

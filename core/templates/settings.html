@@ -14,6 +14,332 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+
+    <style>
+        /* API Access Modal Styles */
+        .api-access-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .api-access-modal.hidden {
+            display: none;
+        }
+
+        .api-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+        }
+
+        .api-modal-content {
+            position: relative;
+            background: var(--bg-primary);
+            border-radius: 16px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border-color);
+        }
+
+        .api-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+            border-radius: 16px 16px 0 0;
+        }
+
+        .api-modal-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        .api-modal-header h3 i {
+            color: #00E396;
+        }
+
+        .close-modal-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .close-modal-btn:hover {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .api-modal-body {
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .api-plan-section {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .api-plan-section.premium {
+            border-color: #00E396;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .api-plan-section.premium::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #00E396, #00A8E8);
+        }
+
+        .plan-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .plan-badge.free {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .plan-badge.premium {
+            background: linear-gradient(135deg, #00E396, #00A8E8);
+            color: #000;
+        }
+
+        .api-plan-section h4 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .plan-description {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .api-endpoint-display {
+            margin-bottom: 1.5rem;
+        }
+
+        .api-endpoint-display label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .endpoint-box {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .endpoint-box code {
+            flex: 1;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: #00E396;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .copy-btn:hover {
+            background: var(--bg-primary);
+            color: #00E396;
+            border-color: #00E396;
+        }
+
+        .plan-pricing {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .price {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+
+        .price .currency {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+        }
+
+        .price .amount {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #00E396;
+            line-height: 1;
+        }
+
+        .price .period {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        .plan-features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .feature-item i {
+            color: #00E396;
+            font-size: 1rem;
+        }
+
+        .api-plan-section.premium .feature-item i {
+            color: #00A8E8;
+        }
+
+        .upgrade-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00E396, #00A8E8);
+            color: #000;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .upgrade-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 227, 150, 0.3);
+        }
+
+        .plan-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .plan-divider span {
+            background: var(--bg-primary);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .api-modal-footer {
+            padding: 1.5rem 2rem;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            border-radius: 0 0 16px 16px;
+        }
+
+        .api-modal-footer p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .api-modal-footer i {
+            color: #00A8E8;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .api-modal-body {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto auto auto;
+            }
+
+            .plan-divider {
+                margin: 1rem 0;
+            }
+
+            .plan-divider span {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -115,14 +441,14 @@
                     </ul>
 
                     <div style="display: flex; gap: 1rem;">
-                        <button class="btn-primary">
+                        <button id="requestApiAccessBtn" class="btn-primary">
                             <i class="fa-solid fa-download"></i>
                             Request API Access
                         </button>
-                        <a href="{% url 'dashboard' %}" class="btn-primary" style="text-decoration: none; display: inline-flex; align-items: center;">
+                        <button onclick="window.history.back()" class="btn-primary" style="display: inline-flex; align-items: center;">
                             <i class="fa-solid fa-arrow-left"></i>
                             Back to Dashboard
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -130,12 +456,161 @@
         </section>
     </main>
 
+    <!-- API Access Modal -->
+    <div id="apiAccessModal" class="api-access-modal hidden">
+        <div class="api-modal-overlay" onclick="closeApiModal()"></div>
+        <div class="api-modal-content">
+            <div class="api-modal-header">
+                <h3>
+                    <i class="fa-solid fa-key"></i>
+                    API Access
+                </h3>
+                <button class="close-modal-btn" onclick="closeApiModal()">
+                    <i class="fa-solid fa-times"></i>
+                </button>
+            </div>
+
+            <div class="api-modal-body">
+                <!-- Free Plan -->
+                <div class="api-plan-section">
+                    <div class="plan-badge free">FREE</div>
+                    <h4>Free Tier</h4>
+                    <p class="plan-description">Limited access for testing and research</p>
+                    
+                    <div class="api-endpoint-display">
+                        <label>Your API Endpoint:</label>
+                        <div class="endpoint-box">
+                            <code id="apiEndpoint">http://127.0.0.1:8000/api/readings/?limit=5</code>
+                            <button class="copy-btn" onclick="copyApiEndpoint()" title="Copy to clipboard">
+                                <i class="fa-solid fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="plan-features">
+                        <div class="feature-item">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span>Up to 5 readings per request</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span>100 requests per day</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span>Basic sensor data</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="plan-divider">
+                    <span>OR</span>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="api-plan-section premium">
+                    <div class="plan-badge premium">PREMIUM</div>
+                    <h4>Extended Access Plan</h4>
+                    <p class="plan-description">Full access for advanced research and analytics</p>
+                    
+                    <div class="plan-pricing">
+                        <div class="price">
+                            <span class="currency">₹</span>
+                            <span class="amount">400</span>
+                            <span class="period">/month</span>
+                        </div>
+                    </div>
+
+                    <div class="plan-features">
+                        <div class="feature-item">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Up to 50 readings per request</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Unlimited daily requests</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Historical data access</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Forecast API included</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fa-solid fa-star"></i>
+                            <span>Priority support</span>
+                        </div>
+                    </div>
+
+                    <button class="upgrade-btn">
+                        <i class="fa-solid fa-rocket"></i>
+                        Upgrade to Premium
+                    </button>
+                </div>
+            </div>
+
+            <div class="api-modal-footer">
+                <p>
+                    <i class="fa-solid fa-info-circle"></i>
+                    All API responses are in JSON format. View full documentation for usage examples.
+                </p>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="{% static 'js/app.js' %}"></script>
-        <!-- ⭐ ADD THIS: AQI Widget Terminal Integration -->
+    <!-- ⭐ ADD THIS: AQI Widget Terminal Integration -->
     <script src="{% static 'js/aqi_widget_terminal.js' %}"></script>
+
+    <script>
+        // API Access Modal Functions
+        function openApiModal() {
+            document.getElementById('apiAccessModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeApiModal() {
+            document.getElementById('apiAccessModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        function copyApiEndpoint() {
+            const endpoint = document.getElementById('apiEndpoint').textContent;
+            navigator.clipboard.writeText(endpoint).then(() => {
+                const copyBtn = event.currentTarget;
+                const originalHTML = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i>';
+                copyBtn.style.color = '#00E396';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalHTML;
+                    copyBtn.style.color = '';
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy to clipboard');
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            const requestBtn = document.getElementById('requestApiAccessBtn');
+            if (requestBtn) {
+                requestBtn.addEventListener('click', openApiModal);
+            }
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeApiModal();
+                }
+            });
+        });
+    </script>
 
 </body>
 
 </html>
- 
